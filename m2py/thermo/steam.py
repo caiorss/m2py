@@ -1,23 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import division
+import os
 import sys
-sys.path.append("..")
-from rawdata import interpol, interpol2, read_csv_table
-from utils import Container, resource_path
 
-__all__ = ["stable", "saturation_table", "mixture_volume", "vapor_quality", "phase"]
+__all__ = ["stable", "mixture_volume", "vapor_quality",
+           "phase", "P_sat", "Vf_sat", "Vg_sat", "T_sat"]
 
-__saturation_table__ = resource_path("saturated_water.csv")
-#print "__saturation_table__ ", __saturation_table__
-saturation_table = read_csv_table(__saturation_table__)
-saturation_table = Container(**saturation_table)
+this = os.path.dirname(os.path.abspath(__file__))
+path_dir = os.path.join(this, "../..")
+sys.path.append(path_dir)
 
-tol = 1e-3
 
-#psat = saturation_table['P']
-#tsat = saturation_table['T']
-#vfsat = saturation_table['Vf']
-#vgsat = saturation_table['Vg']
+
+from m2py.tabledata import interpol, read_table
+from m2py.utils import Container, resource_path
+
+
+
+__saturation_table__ = resource_path("saturated_steam.txt")
+__saturation__ = read_table(__saturation_table__)
+
+tol = 1e-1
 
 def stable(value, _input, params):
     """
@@ -57,8 +61,8 @@ def stable(value, _input, params):
     Sg      Sat Vapor Entropy           kj/Kg-K
         
     Example:
-        >>> import thermo.steamtables
-        >>> thermo.steamtables.sattable(232, 'T', ['P', 'Vf', 'Vg', 'Uf' ])
+        >>> import m2py.thermo.steam
+        >>> m2py.thermo.steam.sattable(232, 'T', ['P', 'Vf', 'Vg', 'Uf' ])
         [2900.98, 0.001213, 0.069092, 995.984]
 
 
@@ -68,7 +72,7 @@ def stable(value, _input, params):
          0.3762758035714286,
          639.3956696428571]  
     """
-    s = saturation_table
+    s = __saturation__
     result = []
     
     input_column= s[_input]
@@ -91,14 +95,14 @@ def Vf_sat(T):
     :param T:  Saturation Temperature in °C
     :return:   Water saturation specific volume of water liquid phase.
     """
-    return stable(T, 'T', ['Vf'])[0]
+    return stable(T, 'T', ['vf'])[0]
 
 def Vg_sat(T):
     """
     :param T: Saturation Temperature in °C
     :return:  Water saturation specific volume of steam phase.
     """
-    return stable(T, 'T', ['Vg'])[0]
+    return stable(T, 'T', ['vg'])[0]
 
 def T_sat(P):
     """
@@ -106,7 +110,6 @@ def T_sat(P):
     :return:  Saturation temperature in °C
     """
     return stable(P, 'P', ['T'])[0]
-
 
 
 def mixture_volume(x, value, _input='T'):
@@ -132,7 +135,7 @@ def mixture_volume(x, value, _input='T'):
            
     """
     
-    vfsat, vgsat= stable(value, _input, ['Vf', 'Vg'])   
+    vfsat, vgsat= stable(value, _input, ['vf', 'vg'])
     v= (1-x)*vfsat + x*vgsat
     return v
 
@@ -144,10 +147,9 @@ def vapor_quality(v, value, _input='T'):
     
     :return: (v-vf)/(vg-vf)
     """ 
-    vfsat, vgsat= stable(value, _input, ['Vf', 'Vg'])       
+    vfsat, vgsat= stable(value, _input, ['vf', 'vg'])
     return (v-vfsat)/(vgsat-vfsat)
-    
-    
+
 
 def phase(T, P=None, v=None, debug=False):
     """
@@ -158,7 +160,7 @@ def phase(T, P=None, v=None, debug=False):
     # Only T and P is known
     if P is not None:
         
-        Tsat, vfsat, vgsat = stable(P, 'P', ['T', 'Vf', 'Vg' ])
+        Tsat, vfsat, vgsat = stable(P, 'P', ['T', 'vf', 'vg' ])
         
         if debug:
             print dict(Tsat=Tsat, vfsat=vfsat, vgsat=vgsat)
@@ -172,7 +174,7 @@ def phase(T, P=None, v=None, debug=False):
         
     if v is not None:
         
-        Psat, vfsat, vgsat = stable(T, 'T', ['P', 'Vf', 'Vg' ])
+        Psat, vfsat, vgsat = stable(T, 'T', ['P', 'vf', 'vg' ])
         
         if debug:
             print dict(Psat=Psat, vfsat=vfsat, vgsat=vgsat)

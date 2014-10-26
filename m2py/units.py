@@ -72,7 +72,7 @@ galon = 0.0037854 #m3 US Gallon
 
 # Pressure
 Pa = 1.0
-KPa = 1.0e3
+kPa = 1.0e3
 MPa = 1.0e6
 GPa = 1.0e9
 psi = 6.895 * 1e3
@@ -155,7 +155,7 @@ units = dict(
     
     # Pressure
     Pa = Pa,  
-    KPa = KPa,  
+    kPa = kPa,
     MPa = MPa,  
     GPa = GPa,  
     psi = psi,  
@@ -268,5 +268,3 @@ def kelvin2farenheit(K):
     :return: 9.0/5.0*K - 459.67
     """
     return 9.0/5.0*K - 459.67
-
-    

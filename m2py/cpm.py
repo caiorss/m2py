@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 from xclip import Xclip
-from matlab2py import translate
+
+from m2py.matlab2py import translate
+
 
 x = Xclip()
 text = x.read() # Read clipboard

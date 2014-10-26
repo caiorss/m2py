@@ -1,4 +1,15 @@
+"""
+tabledata.py
 
+Numerical data analysis module to read tabulated data.
+
+Features:
+    * Table data interpolation
+    * Easy and fast csv data read
+
+"""
+
+from utils import Container
 
 def interpol(x, X, Y):
     """
@@ -12,7 +23,7 @@ def interpol(x, X, Y):
     In [10]: T[:4], P[:4]
     Out[10]: ([5.0, 10.0, 15.0, 20.0], [0.8721, 1.2276, 1.705, 2.339])
     
-    In [11]: interpol(6.45, T, P)
+    In [11]: interp(6.45, T, P)
     Out[11]: 0.975195
     """
     
@@ -42,11 +53,62 @@ def interpol2(x, X, YY):
     Out[6]: [102.20870000000001, 0.0010441398, 1.6610850359999998]
         
     """
-     
     m =  lambda Y: interpol(x, X, Y)
     return map(m, YY)
-    
- 
+
+
+
+
+
+def read_table(filename, separator=',', dtype='float'):
+    """
+    Read table columns from csv foramated file
+
+    :param filename:
+    :return:
+    """
+
+    fp = open(filename, 'r')
+
+    headers = fp.readline()
+
+    # print "headers = ", headers
+    headers = [h.strip() for h in headers.split(separator)]
+    headers.remove('')
+
+    #print "headers = ", headers
+
+    columns = [[] for h in headers]
+    #table = dict.fromkeys(headers, [])
+
+    #table = Container.fromkeys(headers, [])
+
+    #print "table = ", table
+
+    for line in fp.readlines():
+
+        values = [h.strip() for h in line.split(separator)]
+        values.remove('')
+
+        #print "values = ", values
+
+        for k, v in enumerate(values):
+
+            #print k, " = ", v
+
+
+            if dtype == "float":
+                v = float(v)
+
+            columns[k].append(v)
+            #table[k].append(v)
+
+    table = Container(**dict(zip(headers, columns)))
+    table.headers = headers
+
+    return table
+
+
 def read_csv_table(filename, dtype="float"):
     import csv
     fp = open(filename, "rb")
