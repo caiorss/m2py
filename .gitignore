@@ -3,3 +3,4 @@
 *.pyd
 *.o
 .idea
+.~lock.*

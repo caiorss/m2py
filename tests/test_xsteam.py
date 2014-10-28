@@ -4,8 +4,8 @@
 Automated Testing of Steam Equations
 
 """
-
-from __xsteam__ import *
+from __init__ import *
+from m2py.thermo.__xsteam__ import *
 
 
 tol = 1e-3
