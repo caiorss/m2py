@@ -26,7 +26,7 @@ class Listener():
     def _main(self):
 
         #logger.warn("Starting socket server")
-        @import inspect
+        import inspect
         import socket
         s= self.sock
 

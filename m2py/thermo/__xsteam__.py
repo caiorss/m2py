@@ -1973,7 +1973,7 @@ def T3_ps(p, s):
 def h3_pT(p, T):
     # Not avalible with if 97
     # Solve function T3_ph-T=0 with half interval method.
-    #ver2.6 Start corrected bug
+    # ver2.6 Start corrected bug
 
     if p < 22.06395:  #Bellow tripple point
         Ts = T4_p(p)  #Saturation temperature
@@ -2152,7 +2152,7 @@ def region_ph(p, h):
         # Approximate function for hL_p
         hL = 109.6635 * log(p) + 40.3481 * p + 734.58
 
-        #if approximate is not god enough use real functio:
+        # if approximate is not god enough use real functio:
         if abs(h - hL) < 100:
             hL = h1_pT(p, Ts)
 
@@ -2195,7 +2195,7 @@ def region_ph(p, h):
             return 1
 
 
-        #Check if  in region 3 or 4 (Bellow Reg 2:
+        # Check if  in region 3 or 4 (Bellow Reg 2:
         if h < h2_pT(p, B23T_p(p)):
             #Region 3 or 4
             if p > p3sat_h(h):
@@ -2245,7 +2245,7 @@ def Region_prho(p, rho):
             return 1
 
 
-        #Check if  in region 3 or 4 (Bellow Reg 2:
+        # Check if  in region 3 or 4 (Bellow Reg 2:
         if v < v2_pT(p, B23T_p(p)):
             #Region 3 or 4
             #Above region :
@@ -2372,8 +2372,140 @@ def region_pT(p, T):
 # Out = fromSIunit_T(T4_p(p));
 # else
 # Out = NaN;
-#     end
+# end
 
+
+def T5_ph(p, h):
+    #Solve with half interval method
+    Low_Bound = 1073.15
+    High_Bound = 2273.15
+    hs = h - 1
+    while abs(h - hs) > 0.00001:
+        Ts = (Low_Bound + High_Bound) / 2
+        hs = h5_pT(p, Ts)
+        if hs > h:
+            High_Bound = Ts
+        else:
+            Low_Bound = Ts
+
+    _T5_ph = Ts
+    return _T5_ph
+
+
+def T5_ps(p, s):
+    #Solve with half interval method
+    Low_Bound = 1073.15
+    High_Bound = 2273.15
+    ss = s - 1
+    while abs(s - ss) > 0.00001:
+        Ts = (Low_Bound + High_Bound) / 2
+        ss = s5_pT(p, Ts)
+        if ss > s:
+            High_Bound = Ts
+        else:
+            Low_Bound = Ts
+
+    _T5_ps = Ts
+    return _T5_ps
+
+
+def T4_hs(h, s):
+    #Supplementary Release on Backward Equations ( ) , p h s for Region 3,
+    #Chapter 5.3 page 30.
+    #The if  97 function is only valid for part of region4. Use iteration outsida:
+    Ii = [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 8, 10, 10, 12, 14, 14, 16, 16, 18, 18,
+          18, 20, 28]
+    Ji = [0, 3, 12, 0, 1, 2, 5, 0, 5, 8, 0, 2, 3, 4, 0, 1, 1, 2, 4, 16, 6, 8, 22, 1, 20, 36, 24, 1, 28, 12, 32, 14, 22,
+          36, 24, 36]
+    ni = [0.179882673606601, -0.267507455199603, 1.162767226126, 0.147545428713616, -0.512871635973248,
+          0.421333567697984, 0.56374952218987, 0.429274443819153, -3.3570455214214, 10.8890916499278,
+          -0.248483390456012, 0.30415322190639, -0.494819763939905, 1.07551674933261, 7.33888415457688E-02,
+          1.40170545411085E-02, -0.106110975998808, 1.68324361811875E-02, 1.25028363714877, 1013.16840309509,
+          -1.51791558000712, 52.4277865990866, 23049.5545563912, 2.49459806365456E-02, 2107964.67412137,
+          366836848.613065, -144814105.365163, -1.7927637300359E-03, 4899556021.00459, 471.262212070518,
+          -82929439019.8652, -1715.45662263191, 3557776.82973575, 586062760258.436, -12988763.5078195, 31724744937.1057]
+
+    if 5.210887825 <  s < 9.15546555571324:
+
+        Sigma = s / 9.2
+        eta = h / 2800
+        teta = 0
+        for i in range(36):
+            teta = teta + ni[i] * (eta - 0.119) ** Ii[i] * (Sigma - 1.07) ** Ji[i]
+
+        _T4_hs = teta * 550
+    else:
+        #function psat_h
+        if (s > -0.0001545495919 and s <= 3.77828134) == 1:
+            Low_Bound = 0.000611
+            High_Bound = 165.291642526045
+            hL = -1000
+            while abs(hL - h) > 0.00001 and abs(High_Bound - Low_Bound) > 0.0001:
+                PL = (Low_Bound + High_Bound) / 2
+                Ts = T4_p(PL)
+                hL = h1_pT(PL, Ts)
+                if hL > h:
+                    High_Bound = PL
+                else:
+                    Low_Bound = PL
+
+
+        elif 3.77828134 < s <= 4.41202148223476:
+            PL = p3sat_h(h)
+
+        elif 4.41202148223476 < s <= 5.210887663:
+            PL = p3sat_h(h)
+
+        Low_Bound = 0.000611
+        High_Bound = PL
+        sss = -1000
+
+        while abs(s - sss) > 0.000001 and abs(High_Bound - Low_Bound) > 0.0000001:
+            p = (Low_Bound + High_Bound) / 2
+            #Calculate s4_ph
+            Ts = T4_p(p)
+            xs = x4_ph(p, h)
+            if p < 16.529:
+                s4v = s2_pT(p, Ts)
+                s4L = s1_pT(p, Ts)
+            else:
+                v4v = v3_ph(p, h4V_p(p))
+                s4v = s3_rhoT(1 / v4v, Ts)
+                v4L = v3_ph(p, h4L_p(p))
+                s4L = s3_rhoT(1 / v4L, Ts)
+
+            sss = (xs * s4v + (1 - xs) * s4L)
+
+            if sss < s:
+                High_Bound = p
+            else:
+                Low_Bound = p
+
+        _T4_hs = T4_p(p)
+        return _T4_hs
+
+
+def u3_rhoT(rho, T):
+    #Release on the IAPWS Industrial formulation 1997 for the Thermodynamic Properties of Water and Steam, September 1997
+    #7 Basic Equation for Region 3, Section. 6.1 Basic Equation
+    #Table 30 and 31, Page 30 and 31
+    Ii = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 8, 9, 9, 10, 10, 11]
+    Ji = [0, 0, 1, 2, 7, 10, 12, 23, 2, 6, 15, 17, 0, 2, 6, 7, 22, 26, 0, 2, 4, 16, 26, 0, 2, 4, 26, 1, 3, 26, 0, 2, 26, 2, 26, 2, 26, 0, 1, 26]
+    ni = [1.0658070028513, -15.732845290239, 20.944396974307, -7.6867707878716, 2.6185947787954, -2.808078114862, 1.2053369696517, -8.4566812812502E-03, -1.2654315477714, -1.1524407806681, 0.88521043984318, -0.64207765181607, 0.38493460186671, -0.85214708824206, 4.8972281541877, -3.0502617256965, 0.039420536879154, 0.12558408424308, -0.2799932969871, 1.389979956946, -2.018991502357, -8.2147637173963E-03, -0.47596035734923, 0.0439840744735, -0.44476435428739, 0.90572070719733, 0.70522450087967, 0.10770512626332, -0.32913623258954, -0.50871062041158, -0.022175400873096, 0.094260751665092, 0.16436278447961, -0.013503372241348, -0.014834345352472, 5.7922953628084E-04, 3.2308904703711E-03, 8.0964802996215E-05, -1.6557679795037E-04, -4.4923899061815E-05]
+    R = 0.461526 #kJ/(KgK)
+    tc = 647.096 #K
+    pc = 22.064 #MPa
+    rhoc = 322 #kg/m3
+    delta = rho / rhoc
+    tau = tc / T
+    fitau = 0
+
+    for i in range(1, 40):
+        # fitau = fitau + ni(i) * delta ^ Ii(i) * Ji(i) * tau ^ (Ji(i) - 1);
+        fitau = fitau + ni[i] * delta ** Ii[i] * Ji[i] * tau ** (Ji[i] - 1)
+
+    _u3_rhoT = R * T * (tau * fitau)
+    return _u3_rhoT
 
 
 def test_eq(function, args, expected_result, tol=1e-3):

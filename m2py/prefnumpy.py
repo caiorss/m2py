@@ -148,7 +148,7 @@
 # Inputs = (InA,PfT,In1*,In2*)
 
 
-
+from numpy import array
 
 
 
@@ -196,7 +196,7 @@ def PrNmRLkUp(PfT):
         PfT = [100, 110, 120, 140, 150, 180, 200, 220, 250, 280, 300, 350, 400, 450, 500, 550, 600, 700, 800, 900]
     else:
         raise Exception('Unrecognized preferred number series token.')
-
+    PfT = array(PfT)
     return [PfT,PfO,DfA]
 
         #-----------------------------------------------------------------------End

@@ -1,11 +1,11 @@
 """
-tabledata.py
+numerical.py
 
-Numerical data analysis module to read tabulated data.
+    Numerical Methods Library
 
-Features:
-    * Table data interpolation
-    * Easy and fast csv data read
+        * Newton Raphson
+        * Table read, csv files
+        * Table Interpolation
 
 """
 
@@ -55,10 +55,6 @@ def interpol2(x, X, YY):
     """
     m =  lambda Y: interpol(x, X, Y)
     return map(m, YY)
-
-
-
-
 
 def read_table(filename, separator=',', dtype='float'):
     """
@@ -127,4 +123,3 @@ def read_csv_table(filename, dtype="float"):
                 table[k] = []
     
     return table
-   

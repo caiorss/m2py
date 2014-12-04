@@ -4,18 +4,15 @@ from __future__ import division
 import os
 import sys
 
-__all__ = ["stable", "mixture_volume", "vapor_quality",
-           "phase", "P_sat", "Vf_sat", "Vg_sat", "T_sat"]
+__all__ = ["__stable__", "mixture_volume", "vapor_quality",
+           "phase", "p_satT", "vf_satT", "Vg_sat", "T_sat"]
 
 this = os.path.dirname(os.path.abspath(__file__))
 path_dir = os.path.join(this, "../..")
 sys.path.append(path_dir)
 
-
-
-from m2py.tabledata import interpol, read_table
-from m2py.utils import Container, resource_path
-
+from m2py.numerical.numerical import interpol, read_table
+from m2py.utils import resource_path
 
 
 __saturation_table__ = resource_path("saturated_steam.txt")
@@ -23,7 +20,8 @@ __saturation__ = read_table(__saturation_table__)
 
 tol = 1e-1
 
-def stable(value, _input, params):
+
+def __stable__(value, _input, params):
     """
     Calculate the Saturated water thermodynamic properties 
     table from Steam table properties, given the temperature T.
@@ -66,7 +64,7 @@ def stable(value, _input, params):
         [2900.98, 0.001213, 0.069092, 995.984]
 
 
-        >>> s.stable(500, 'P', ['T', 'Vf', 'Vg', 'Uf' ])
+        >>> s.__stable__(500, 'P', ['T', 'Vf', 'Vg', 'Uf' ])
         [151.79315476190476,
          0.0010921517857142857,
          0.3762758035714286,
@@ -74,42 +72,92 @@ def stable(value, _input, params):
     """
     s = __saturation__
     result = []
-    
-    input_column= s[_input]
-    
+
+    input_column = s[_input]
+
     for p in params:
         y = interpol(value, input_column, s[p])
         result.append(y)
-    
+
     return result
 
-def P_sat(T):
+
+def psat_t(T):
     """
     :param T: Saturation temperature in °C
     :return:  Water steam saturation pressure in kPa
     """
-    return stable(T, 'T', ['P'])[0]
+    return __stable__(T, 'T', ['P'])[0]
 
-def Vf_sat(T):
-    """
-    :param T:  Saturation Temperature in °C
-    :return:   Water saturation specific volume of water liquid phase.
-    """
-    return stable(T, 'T', ['vf'])[0]
 
-def Vg_sat(T):
+def tsat_p(P):
     """
-    :param T: Saturation Temperature in °C
-    :return:  Water saturation specific volume of steam phase.
-    """
-    return stable(T, 'T', ['vg'])[0]
+    Saturation Temperature
 
-def T_sat(P):
-    """
     :param P: Saturation Pressure in kPa
     :return:  Saturation temperature in °C
     """
-    return stable(P, 'P', ['T'])[0]
+    return __stable__(P, 'P', ['T'])[0]
+
+
+def vsat_xt(x, T):
+    """
+    Saturation Volume as function of Steam Quality and Temperature
+    :param T:
+    :param x:
+    :return:
+    """
+    if x < 0 or x > 1:
+        raise ValueError("Steam quality must be in 0 < x < 1")
+
+    vf, vg = __stable__(T, 'T', ['vf', 'vg'])
+    v = (1 - x) * vf + x * vg
+    return v
+
+def hsat_xt(x, T):
+    """
+    :param x:
+    :param T:
+    :return:
+    """
+    if x < 0 or x > 1:
+        raise ValueError("Steam quality must be in 0 < x < 1")
+
+    hf, hg = __stable__(T, 'T', ['hf', 'hg'])
+    h = (1 - x) * hf + x * hg
+    return h
+    
+def usat_xt(x, T):
+    """
+    Saturation Volume as function of Steam Quality and Temperature
+    :param T:
+    :param x:
+    :return:
+    """
+    if x < 0 or x > 1:
+        raise ValueError("Steam quality must be in 0 < x < 1")
+
+    uf, ug = __stable__(T, 'T', ['uf', 'ug'])
+    u = (1 - x) * uf + x * ug
+    return u
+    
+def ssat_xt(x, T):
+    """
+    Saturation Volume as function of Steam Quality and Temperature
+    :param T:
+    :param x:
+    :return:
+    """
+    if x < 0 or x > 1:
+        raise ValueError("Steam quality must be in 0 < x < 1")
+
+    sf, sg = __stable__(T, 'T', ['sf', 'sg'])
+    s = (1 - x) * sf + x * sg
+    return s
+    
+
+
+
 
 
 def mixture_volume(x, value, _input='T'):
@@ -134,9 +182,9 @@ def mixture_volume(x, value, _input='T'):
     0.04495115454545455
            
     """
-    
-    vfsat, vgsat= stable(value, _input, ['vf', 'vg'])
-    v= (1-x)*vfsat + x*vgsat
+
+    vfsat, vgsat = __stable__(value, _input, ['vf', 'vg'])
+    v = (1 - x) * vfsat + x * vgsat
     return v
 
 
@@ -146,39 +194,39 @@ def vapor_quality(v, value, _input='T'):
     v, vf and vg
     
     :return: (v-vf)/(vg-vf)
-    """ 
-    vfsat, vgsat= stable(value, _input, ['vf', 'vg'])
-    return (v-vfsat)/(vgsat-vfsat)
+    """
+    vfsat, vgsat = __stable__(value, _input, ['vf', 'vg'])
+    return (v - vfsat) / (vgsat - vfsat)
 
 
 def phase(T, P=None, v=None, debug=False):
     """
     Determine the phase of saturated steam. 
     Given its temperature or Specific Volume
-    """  
-    
+    """
+
     # Only T and P is known
     if P is not None:
-        
-        Tsat, vfsat, vgsat = stable(P, 'P', ['T', 'vf', 'vg' ])
-        
+
+        Tsat, vfsat, vgsat = __stable__(P, 'P', ['T', 'vf', 'vg'])
+
         if debug:
             print dict(Tsat=Tsat, vfsat=vfsat, vgsat=vgsat)
-        
+
         if T < Tsat:
             return "Supercooled liquid"
-        elif abs(T-Tsat) < tol:
+        elif abs(T - Tsat) < tol:
             return "Two mixed phase mixture liquid and vapor"
         else:
             return "Vapor"
-        
+
     if v is not None:
-        
-        Psat, vfsat, vgsat = stable(T, 'T', ['P', 'vf', 'vg' ])
-        
+
+        Psat, vfsat, vgsat = __stable__(T, 'T', ['P', 'vf', 'vg'])
+
         if debug:
             print dict(Psat=Psat, vfsat=vfsat, vgsat=vgsat)
-        
+
         if v < vfsat:
             return "Liquid"
         elif vfsat < v < vgsat:
