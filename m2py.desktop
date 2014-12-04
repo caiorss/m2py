@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=m2py shell
+Comment=Encfs Wizard -- Helps you to protect your data and privacy.
+Exec=bash /home/tux/PycharmProjects/m2py/m2py.sh
+Icon=terminator
+Categories=Application;GTK;Security;Utility
+
+
