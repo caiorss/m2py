@@ -3,6 +3,7 @@
 """
 
 """
+from m2py.misc import prefnum
 
 """
  prefnum([514,7.6,37,0.9],'E6')     Electronic, six steps per decade.
@@ -26,8 +27,6 @@
  prefnum([514,7.6,37,0.9],1)        Custom vector, nearest order of magnitude.
    ans = [100,10,10,1]
 """
-from __init__ import *
-from m2py.prefnum import prefnum
 
 print prefnum([514, 7.6, 37, 0.9], 'E6')  # Electronic, six steps per decade.
 

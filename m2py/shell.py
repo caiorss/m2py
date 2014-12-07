@@ -1,335 +1,396 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-A wraper to IPython to make calculation easier
-like Matlab(R)
 
 """
 from __future__ import division
 
+import os
+import sys
 
-__author__ = "Caio Rodrigues Soares Silva"
+from ipshellapi import Ipshell
 
-# Matplotlib intercative
-# non-blocking
+from utils import resource_path
+from subprocess import Popen
+from Listener import Listener
 
-from thermo import xsteam
-import units
-from units import factor
-import constants
-from engine import *
-from IPython.terminal.embed import InteractiveShellEmbed
+ipsh = Ipshell()
 
+# listener = Listener()
 
-class Listener():
+#pyserver.namespace = globals()
+#listener.namespace = ipsh.user_ns
 
-    def __init__(self, host='', port=8888):
-
-        import socket
-        import sys
-
-        self.namespace = None
-
-        self.host = host   # Symbolic name, meaning all available interfaces
-        self.port = port   # Arbitrary non-privileged port
-
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        #s.settimeout(1)
-        #print 'Socket created'
-
-        #Bind socket to local host and port
-        self.sock = s
-
-
-    def _main(self):
-
-        #logger.warn("Starting socket server")
-        #import inspect
-        import socket
-        s= self.sock
-
-        try:
-            s.bind((self.host, self.port))
-        except socket.error as msg:
-            print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-            pass
-            #sys.exit()
-
-        #Start listening on socket
-        s.listen(10)
-
-        while 1:
-            conn, addr = self.sock.accept()
-            code = conn.recv(8049)
-            conn.close()
-            
-    
-            #_globals = inspect.currentframe().f_back.f_globals
-
-            code = '\n' + code
-            print code
-
-            try:
-                bytecode = compile(code, '<string>', 'exec')
-                exec (bytecode, globals())
-            except Exception as err:
-                print err
-                print err.args
-                print err.__class__
-
-    def main(self):
-
-        import threading
-
-        server_thread = threading.Thread(target=self._main, args=())
-        server_thread.daemon =True
-        server_thread.start()
-
-def __guide(self, arg):
-    """
-    Show a Ipython cheatsheet
-    with examples
-
-    """
-
-    print """
-Quick Ipython Guide
-
-
-HISTORY
-
-* history with lines
-     hist -n
-
-* history with lines and output
-     hist -n -o
-
-* History converted in valid python
-  source code
-     hist -n -t
-
-* Save history to file
-     hist <line-range> -f <file>
-     hist 1-10 -f h1.py
-
-* Rerun previous commmand/input
-     rerun
-
-* Rerun line(s)
-     rerun <line-range>
-
-* Edit history lines in vim and execute
-    edit 2-10
-
-* Run py script
-    run script.py
-
-*
-
-SESSIONS
-
-create a macro called mac out of lines 1, 2, 3, 4,
-and 7 of the history
-    macro mac 1-4 7
-
-runs the macro called mac
-    mac
-
-print mac       prints the commands in "c">mac
-store mac       stores the macro in the profile, it will be available next time you start IPython
-store x             store x in the profile. It will be loaded next time you start IPython.
-store x > /tmp/a.txt    store x in the file, a.txt
-store -r        restore into the workspace the variables that have been stored. Overwrites exisiting variables in workspace.
-store -d x      delete just x from
-storage
-store -z        remove ALL variables from storage
-
-
-LOGGING
-
-logstate        show state of the logger (on or off)
-logstart        start logging (default log file is ipython_log.py, in the present working directory
-logstart filename   store history up to this point, and continue logging history, in filename
-logstart -r filename    same as above, but use the raw input: don’t put the _ip.magic() wrapper around magic commands
-logon           start logging after stopping
-logoff          stop logging after starting
-runlog log1 log2    run the log file log1, then run the log file log2 (this executes the logged histories)
-
-
-DOCUMENTATION AND CODE INSTROSPECTION
-
-Display functin help
-    ? <function>
-
-Print Docstring of object
-    pdoc <object>
-
-Pfile -  Print through pager where the object is defined
-    pfile <object>
-
-pinfo - Print information about object
-    pinfo <object>
-
-
-pinfo2 - Print detailed information about object
-    pinfo2 <object>
-
-psource - Print source code in through pager
-    psource <object>
-
-
-OBJECTIVES
-    who    - Print a list of all interactive variables
-    whos_l - Print a list of interactive variables
-    whos   - Print extra information about variables
-
-
-CUSTOM LISTING
-
-    functions - List all functions
-    values    - List all numeric variables ( Calculated values)
-    arrays    - List all array variables
-    strings   - List all string variables
-
-"""
-
-
-
-# Start directory
-HOMEDIR = os.path.expanduser('~')
-# os.chdir(HOMEDIR)
-
-# Save log session log file automatically
-#--------------------------
-#__logdir = "/tmp/pylogs"
-#os.system('mkdir -p ' + __logdir )
-#__logfile = os.path.join(__logdir, 'log' + datetime.now().strftime('%y-%m-%d-%H-%M') + '.py')
-
-# Banner and exit message
-#------------------------------
-banner = \
-    """--- IPYTHON MATH LAB ENVIRONMENT ----\n
-    To see the ipython cheat-sheet type:
-    $  guide()
-    
-    Standard objects and modules
-    
-        -> xsteam:    Water Steam Table using NIST equations
-        -> factor:    Units convertion factor, example MPA/psi
-        -> units :    Unist factor and conversion functions
-        -> constants: Physical Constants
-        
-    Angle Trigonometric Functions in degrees
-    
-    cosd, sind, atand, atand2, deg2rad, rad2deg, 
-
-    """
-exit_msg = "*** logfile: %s ***" 
-# First import the embed function
-
-
-
-ipshell = InteractiveShellEmbed(banner1=banner, exit_msg=exit_msg)
-IP = ipshell.get_ipython()
-
-
-def __setprec2(n):
-    formt= '%' +'.%sf' % n
-    #get_ipython().magic('precision '+formt)
-    IP.magic('precision '+formt)    
-
-def __setprec(self, n, type="fix"):
-    """
-    Set IPython Shell number of decimal places
-    
-    :param n: Maximum number of decimal places to be displayed
-    :type  n: int
-    :return:
-    """
-    if type == 'fix':
-        base = '.%sf'
-    
-    formt= '%' + base % n
-    #get_ipython().magic('precision '+formt)
-    IP.magic('precision '+formt)
-
-def include(filename):
-    if os.path.exists(filename):
-        execfile(filename)
-
+@ipsh.magic("values")
 def list_values(self, arg):
     """
     List all numeric types
     """
-    IP.magic(u'whos int float float64 ndarray')
 
+    ipsh.get_magic(u'whos int float float64 ndarray')
+
+
+@ipsh.magic("arrays")
 def list_arrays(self, arg):
     """
     Show all ndarrays
     """
-    IP.magic(u'whos ndarray')
 
+    ipsh.get_magic(u'whos ndarray list')
+
+
+@ipsh.magic("lists")
 def list_lists(self, arg):
     """
     Show all lists objects
     """
-    IP.magic(u'whos list')
+    ipsh.get_magic(u'whos list')
 
+
+@ipsh.magic("strings")
 def list_strings(self, arg):
-    IP.magic(u'whos str')
+    ipsh.get_magic(u'whos str')
 
+
+@ipsh.magic("functions")
 def list_functions(self, arg):
-    IP.magic(u'whos function')
-
-ipshell.define_magic('values', list_values)
-ipshell.define_magic('arrays', list_arrays)
-ipshell.define_magic('functions', list_functions)
-ipshell.define_magic('strings', list_strings)
-ipshell.define_magic('lists', list_lists)
-ipshell.define_magic('guide', __guide)
-ipshell.define_magic('setprec', __setprec)
+    ipsh.get_magic(u'whos function')
 
 
-import argparse
-import sys
+@ipsh.magic("addpath")
+def addpath(self, path):
+    """ Add path to sys.path """
+    sys.path.append(path)
+
+
+@ipsh.magic("digits")
+def set_digits(self, args):
+    """
+    Set IPython Shell number of digits
+
+    :param n: Maximum number of decimal places to be displayed
+    :type  n: int
+    :return:
+    """
+
+    try:
+        n, type = args.split()
+    except:
+        print """
+        $ digits #digits <format>
+
+            Example:
+            $ digits 5 fix
+
+        """
+    if type == 'fix':
+        base = '.%sf'
+
+    formt = '%' + base % n
+    #get_ipython().magic('precision '+formt)
+    ipsh.exec_magic('precision ' + formt)
+
+
+@ipsh.magic("see")
+def see(self, args):
+    """
+    Explore Object members
+
+    Usage:
+
+        %see <type> <object>
+
+        <type>
+
+        a       : Print all object members
+        f       : Print all object functions
+        m       : Print all object modules
+        c       : Print all classes defined in object
+        file    : See which file the object is defined
+        v       : Print all values (float, ndarray defined in module)
+
+    Example:
+    In [14]: import os
+    In [15]: see f os
+    _execvpe ._exists ._get_exports_list ._make_stat_result ...
+
+    """
+
+    import inspect
+
+    try:
+        type, obj = args.split()
+        obj = eval(obj, ipsh.user_ns)
+    except Exception as err:
+        print \
+            """
+        Explore Object members
+
+        Usage:
+
+            %see <type> <object>
+
+            <type>
+
+            a       : Print all object members
+            f       : Print all object functions
+            m       : Print all object modules
+            c       : Print all classes defined in object
+            file    : See which file the object is defined
+            v       : Print all values (float, ndarray defined in module)
+
+        Example:
+        In [14]: import os
+        In [15]: see f os
+        _execvpe ._exists ._get_exports_list ._make_stat_result ...
+        """
+
+        #print err
+        return
+
+    members = inspect.getmembers(obj)
+
+    filter_member = lambda filterfunc: \
+        [m[0] for m in members if filterfunc(m[1])]
+
+    if type == "a":
+
+        print " ".join([m[0] for m in members])
+
+    elif type == "f":
+        #funcs = [m[0] for m in members if inspect.isfunction(m[1])]
+        funcs = filter_member(inspect.isfunction)
+        print " .".join(funcs)
+
+    elif type == "file":
+        print inspect.getsourcefile(obj)
+
+    elif type == "c":
+        #classes = [m[0] for m in members if inspect.isclass(m[1])]
+        classes = filter_member(inspect.isclass)
+        print " .".join(classes)
+
+    elif type == "m":
+        #classes = [m[0] for m in members if inspect.isclass(m[1])]
+        modules = filter_member(inspect.ismodule)
+        print " ".join(modules)
+
+    elif type == "v":
+        #classes = [m[0] for m in members if inspect.isclass(m[1])]
+        vfilter = lambda obj: isinstance(obj, float) or isinstance(obj, int)
+
+        modules = filter_member(vfilter)
+        print " ".join(modules)
+
+
+@ipsh.magic("docs")
+def __docs__(self, arg=""):
+    if not arg:
+        print \
+            """
+        Show PDF documentation
+
+        Usage:
+            Show available documentation
+            $ docs list
+
+            Open documentation
+            $ docs <doctype>
+
+            <doctype>
+                quickref - Show Quick reference pdf
+        """
+        return
+
+    if arg == "list":
+        resourcedir = resource_path("resources")
+        doclist = map(lambda f: f.split('.pdf')[0], os.listdir(resourcedir))
+        print " ".join(doclist)
+        return
+
+    filename = resource_path("resources/%s.pdf" % arg)
+    print filename
+    Popen("xdg-open %s > /dev/null 2>&1" % filename, shell=True)
+
+
+@ipsh.magic("listener")
+def __listener__(self, arg):
+    if arg == "on":
+        listener.start()
+
+    elif arg == "off":
+        listener.stop()
+
+    else:
+        print "Turn on/off remote listener server"
+        print "%listener [on|off]"
+
+
+@ipsh.magic("diary")
+def diary(self, arg):
+    """
+    Matlab Diary Equivalent
+
+    Save Command Window text to file
+    expand all in page
+    Syntax
+
+    diary
+    diary('filename')
+    diary off
+    diary on
+    diary filename
+    """
+
+    if not arg:
+        ipsh.exec_magic("logstart -o diary")
+
+    elif arg == "off":
+        ipsh.exec_magic("logstop")
+    else:
+        ipsh.exec_magic("logstart %s" % arg)
+
+
+def __show_cheat_sheet__(self, arg):
+    print """
+    %<magic> [[args]]
+
+    See PDF documentation
+    ----------------------------------------------------------------
+        docs <doctype>
+
+        <doctype>
+             quickref - Show Quick reference pdf
+
+        Example:
+            $ docs quickref
+
+    Add Path to sys.path ( import path )
+    ----------------------------------------------------------------
+        $ addpath <path>
+
+        Example:
+        In [2]: %addpath /home/tux/PycharmProjects/m2py
+        In [3]: import m2py as m
+
+    Show Values
+    ----------------------------------------------------------------
+
+        Show all user variables
+        $ whos
+
+        Show all floats and ints
+        $ values
+
+        Show all ndarrays and lists
+        $ arrays
+
+        Show all functions
+        $ functions
+
+        Show all strings
+        $ strings
+
+    Explore Object members
+    ----------------------------------------------------------------
+    %see <type> <object>
+
+    <type>
+
+    a       : Print all object members
+    f       : Print all object functions
+    m       : Print all object modules
+    c       : Print all classes defined in object
+    file    : See which file the object is defined
+    v       : Print all values (float, ndarray defined in module)
 
 
 
-#import IPython 
-#from Listener import Listener 
+    """
 
-# Daemon server to listen for python code
-# from localhost
 
-#    IPython.embed()
+__usage__ = \
+    """
+Enter:
+    %usage       - to show usage
+    %cheatsheet  - To show commands examples
+    %magic       - To show Magic Functions User guide
+    $quickref    - IPython quick reference card
+"""
+
+
+def __show_usage__(self, arg):
+    print __usage__
+
+
+@ipsh.magic("finance_mode")
+def _finance_mode(self, arg):
+    print "Loading Finance package"
+    print "Objects: finance, factors, amortizacao"
+    exec ("from m2py.finance import finance, factor", ipsh.user_ns)
+    exec ("from m2py.finance import dtime as dt", ipsh.user_ns)
+    exec ("from m2py.finance import daycounting as dc", ipsh.user_ns)
+    exec ("from m2py.finance import brbonds", ipsh.user_ns)
+    exec ("fin = finance", ipsh.user_ns)
+
+
+@ipsh.magic("thermo_mode")
+def _thermo_mode(self, arg):
+    print "Loading Thermodynamic package: xsteam, gas"
+    print "to see details type: $ xsteam? or object?"
+    exec ("from thermo import *", ipsh.user_ns)
 
 
 def main():
-    
-    pyserver = Listener()
-    #pyserver.namespace = globals()
-    pyserver.main()
+    # Set ipython to auto reload modules
+
+    ipsh.autoreload()
+    ipsh.autocall()
+
+    ipsh.IP.banner1 = __usage__
+    ipsh.set_magic("usage", __show_usage__)
+    ipsh.set_magic("cheatsheet", __show_cheat_sheet__)
+
+    #listener.main()
+
+    #ipsh.load_modules(['numerical', 'constants'], hidden=True)
+    #ipsh.load_functions_from_module("m2py", ["numerical", "constants"])
+    exec ("""
+from m2py.misc import units, constants
+from m2py.misc import vectorize
+from m2py.misc.extra import eng, eng2, sind, cosd, tand
+
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import plot, scatter, show, grid, ion, xlabel, ylabel, title
+ion()
+
+    """, ipsh.user_ns)
+
+    map(ipsh.ipsh.user_ns_hidden.add, ["units", "constants", "vectorize", "eng", "eng2", "cosd", "sind", "tand"])
+
+    ipsh.load_functions_from_module("numpy", [
+        "array", "sin", "cos", "log", "log10", "exp", "linspace", "logspace", "arange",
+        "std", "var", "mean", "average", "cov", "corrcoef", "cumsum", "cumprod",
+        "min", "max", "sum", "histogram",
+    ], hidden=True)
 
 
-    desc = " Python Mathematic Lab Environment "
-    parser = argparse.ArgumentParser(prog='mathpy', description=desc)
+    # ipsh.load_functions_from_module("extra", ["deg2rad", "rad2deg", "sind", "cosd", "tand", "arctan2d",
+    #                                           "eng", "eng2"], hidden=True)
 
- 
-    __setprec2(4)
-    ipshell()
+    #import matplotlib.pyplot as plt
 
-    #if args.runfile:
-    #    print "Run script %s" % args.runfile
-    #    #include(args.runfile)
-    #    execfile(args.runfile)
-    #    ipshell()
+    #ipsh.user_ns['plt'] = plt
+    #ipsh.ipsh.user_ns_hidden.add('plt')
+    #plt.ion()
 
-        #sys.exit(0)
+    #ipsh.load_functions_from_module("matplotlib.pylab", ["ion", "plot", "show", "clf", "figure"], hidden=True)
+
+    ipsh.run()
+
 
 if __name__ == "__main__":
     main()
 
-    # IP.magic('logstart ' + __logfile)
-    # ipshell()
+
 

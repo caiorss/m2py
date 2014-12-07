@@ -7,12 +7,16 @@ An opensource matlab-like financial toolbox.
 Functions reference:    http://www.mathworks.com/help/finance/fvfix.html
 
 
+https://www.wiziq.com/tutorial/753129-Fixed-income-in-Matlab-26-Apr-1800
 
+
+
+
+http://www.quantcode.com/modules/mydownloads/viewcat.php?cid=9&min=120&orderby=datea&show=..
 """
 from __future__ import division
 from math import exp
 import datetime
-
 from m2py.numerical.roots import nraphson
 
 
@@ -36,6 +40,7 @@ def moving(iterator, length, step=1):
     ms = tee(iterator, length)
     return izip(*[islice(m, i, None, step) for m, i in zip(ms, count())])
 
+
 def convert_AERtoCont(ic):
     """
     Convert annual discrete interest rate to Continuous compouning rate
@@ -50,6 +55,149 @@ def convert_AERtoCont(ic):
     return exp(ic) - 1
 
 
+def meanreturn(rates):
+    """
+    Calculates the average rate of return given a list of returns.
+
+    [ r1, r2, r3, r4, r5 ... rn ]
+
+    r = [(1+r1)*(1+r2)*(1+r2) .... * (1+rn)]^(1/n) - 1
+
+    :param rates: List of interest rate
+    :return: Geometric mean return
+
+    Example:
+        Suppose you have invested your savings in the stock market for five years.
+        If your returns each year were 90%, 10%, 20%, 30% and -90%, what would your
+        average return be during this period? Ans. -20%
+
+
+    >>> import m2py.finance.finance as fin
+    >>> # Return in percent
+    >>> 100*fin.meanreturn([0.9, 0.10, 0.20, 0.30, -0.90])
+    -20.080238920753235
+
+    Reference: http://www.investopedia.com/ask/answers/06/geometricmean.asp
+    """
+    prod = 1
+
+    for r in rates:
+        prod = prod * (1 + r)
+
+    return prod ** (1.0 / len(rates)) - 1
+
+
+def eqvrate(rate, input_format, output_format='y'):
+    """
+    :param rate:            Interest rate in decimal format
+    :param input_format:    Interest compound period
+    :param output_format:   Equivalent interest rate compound period ( default 'y' yearly )
+    :return:                Equivalent interest rate
+
+    Possible values to [input_format] and [output_format]:
+
+        m       Compounded monthly
+        m/252   Compounded each        Each month has 21 business days in a 252 business-days year convention
+        d       Compounded daily       30/360 days convention
+     365d       Compounded daily       365 days convention
+     252d       Compounded daily       252 workdays
+        y or a  Compounded yearly
+        y/252   Compounded yearly      252 business days convention
+       2m       Compounded each 2 months
+       3m       Compounded each 3 months
+       4m       Compounded each 4 months
+       6m       Compounded each 6 months
+
+    Example:
+
+    Equivalent yearly interest rate to 8% monthly interest rate
+
+    >>> import m2py.finance.finance as fin
+    >>> 100*fin.eqvrate(0.008, 'm')
+    10.033869371614635
+    >>> # Equivalent daily interest rate to 8%
+
+    """
+    ninput = eqvrate.formats[input_format]
+    noutput = eqvrate.formats[output_format]
+    yrate = (1 + rate) ** ninput - 1
+    outrate = (1 + yrate) ** (1.0 / noutput) - 1
+    return outrate
+
+
+eqvrate.formats = {'m': 12.0,
+                   'm/252' : 12,
+                   'd': 360.0,
+                   'y': 1.0,
+                   'y/252' : 1.0,
+                   'a/252' : 1.0,
+                   'a': 1.0,
+                   's': 2.0,
+                   '252d': 252,
+                   '365d': 365,
+                   '2m': 6,
+                   '3m': 4,
+                   '4m': 3,
+                   '6m': 2,
+                   }
+
+
+def FV(i, n, pv=0, pmt=0, fv=0):
+    """
+    Calculates Future Value
+    :param i:   Interest rate
+    :param n:   Number of periods
+    :param pv:  Present Value at t=0
+    :param pmt: Payment
+    :param fv:  Future Value in t=end
+    :return:
+    """
+    return fv + pv * (1 + i) ** n + pmt * ((1 + i) ** n - 1 ) / i
+
+
+def PV(i, n, fv=0, pv=0, pmt=0):
+    """
+    Calculates Present Value
+    :param i:   Interest rate
+    :param n:   Number of periods
+    :param fv:  Future Value in t=end
+    :param pv:  Present Value at t=0   [Default: 0]
+    :param pmt: Payment                [Default: 0]
+    :return:
+    """
+    return pv + fv / (1 + i) ** n + pmt * (1 - 1 / (1 + i) ** n) / i
+
+
+def ipmt(n, PV, PMT, PV0=0):
+    """
+    Calculates the interest rate of an installment payments
+
+    :param n:    Number of periods
+    :param PV:   Present Value/ Cash Price
+    :param PMT:  Installment Payment
+    :param PV0:  Payment at t=0 or Down payment [Default: 0]
+    :return:     Interest rate
+    """
+    from m2py.numerical.roots import nraphson
+
+    c = (PV - PV0) / PMT
+    f = lambda i: (1 - 1 / (1 + i) ** n) / i - c
+    df = lambda i: ((i + 1) ** -n - 1 * n) / i - (1 - 1 / (i + 1) ** n) / i ** 2
+    root, _, _ = nraphson(f, df, 2, tol=1e-5, maxit=500)
+    return round(root, 6)
+
+
+def pmt_pv(i, n, PV, PV0=0):
+    """
+    Calculates the installment of a present Value.
+
+    :param i:   Interest rate
+    :param n:   Number of periods
+    :param PV:  Present Value
+    :param PV0: Payment at t=0/ Down Payment
+    :return:
+    """
+    return i / (1 - 1 / (1 + i) ** n) * (PV - PV0)
 
 
 def effrr(Rate, NumPeriods):
@@ -312,7 +460,7 @@ def irr(CashFlow, all=False):
     from numpy import isreal
 
     roots = P(CashFlow).roots()
-    #roots = [float(r) for r in roots if isreal(r)]
+    # roots = [float(r) for r in roots if isreal(r)]
 
     if not all:
         roots = filter(lambda r: isreal(r) and r > 0, roots)
@@ -398,10 +546,16 @@ def fvvar(CashFlow, Rate, CFDates=[], format=r"%m/%d/%Y", ndays=365):
 # print FutureVal
 
 # FutureVal = fvvar([-10000, 2000, 1500, 3000, 3800, 5000], 0.08)
-#print FutureVal
+# print FutureVal
 
 
 def expsum(x, coefficient, powers):
+    """
+    :param x:           Input variable
+    :param coefficient: List of coefficients [ a0, a1, a2, a3, a4, ... an]
+    :param powers:      List of expoents     [ c0, c1, c2, c3, c4, ... cn]
+    :return:            a0.x^c0 + a1.x^c1 + a2.x^c2 + a3.x^c3 + ...
+    """
     S = 0
     for c, p in zip(coefficient, powers):
         S += c * x ** p
@@ -439,16 +593,16 @@ def xirr(CashFlow, CFDates, ndays=365, format=r"%m/%d/%Y", guess=1.0):
     for d, c in zip(dates, CashFlow):
         dt = d - d0
         np = dt.days / ndays
-        #print "d =", d, "c =", c, " dt = ", dt.days, "np = ", np
+        # print "d =", d, "c =", c, " dt = ", dt.days, "np = ", np
         cashflow_exponents.append(np)
 
     d_cashflow_exponents = [np - 1 for np in cashflow_exponents[1:]]
     d_coefs = [c * np for c, np in zip(coefs[1:], cashflow_exponents[1:])]
 
-    #print "coefs ", coefs
-    #print "cashflow_exponents ", cashflow_exponents
-    #print "d_coefs", d_coefs
-    #print "d_cashflow_exponents", d_cashflow_exponents
+    # print "coefs ", coefs
+    # print "cashflow_exponents ", cashflow_exponents
+    # print "d_coefs", d_coefs
+    # print "d_cashflow_exponents", d_cashflow_exponents
 
     f = lambda x: expsum(x, coefs, cashflow_exponents)
     df = lambda x: expsum(x, d_coefs, d_cashflow_exponents)
@@ -481,9 +635,9 @@ def payper(Rate, NumPeriods, PresentValue, FutureValue, Due):
 
     x = 1 / (1 + Rate)
     q = (x ** (NumPeriods + 1) - x ) / (x - 1)
-    PM = -1*(FutureValue - PresentValue) / q
+    PM = -1 * (FutureValue - PresentValue) / q
 
-    #print "PM = ", PM
+    # print "PM = ", PM
     return PM
 
 
@@ -504,12 +658,12 @@ def annuterm(Rate, Payment, PresentValue, FutureValue, Due):
     fv = lambda n: pv * (1 + i) ** (n + 1) + (pmt - pv) * (1 + i) ** n - pmt
     dfv = lambda n: (n + 1) * pv * (1 + i) ** n + n * (pmt - pv) * (1 + i) ** (n - 1)
 
-    n = nraphson(fv, dfv, 10)
+    n = nraphson(fv, dfv, 1)
 
     return n
 
 
-#print payper(0.1175 / 12, 36, 9000, 0, 0)
+    # print payper(0.1175 / 12, 36, 9000, 0, 0)
 
-#NumPeriods = annuterm(0.09/12, 200, 1500, 5000, 0)
-#print NumPeriods
+    # NumPeriods = annuterm(0.09/12, 200, 1500, 5000, 0)
+    # print NumPeriods

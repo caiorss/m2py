@@ -268,7 +268,7 @@ def juros_price(PV, PMT, n, PV0=0):
     :param n:     Número de parcelas
     :return:      Taxa de juros decimal usada no parcelamento
     """
-    from m2py.numerical.numerical import nraphson
+    from m2py.numerical.roots import nraphson
     c = (PV - PV0) / PMT
     f = lambda i: (1 - 1 / (1 + i) ** n) / i - c
     df = lambda i: ((i + 1) ** -n - 1 * n) / i - (1 - 1 / (i + 1) ** n) / i ** 2

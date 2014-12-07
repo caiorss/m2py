@@ -96,14 +96,13 @@ def nraphson(f, df, x0, tol=1e-3, maxit=20000):
     return x, it, error
 
 
-def stefessen(f, x0, tol=1e-3, maxit=20000):
+def steffenssen(f, x0, tol=1e-3, maxit=20000):
     """
     Stefessen Method for Equation Solving
 
     Compute equation roots based on stefessen method
 
     :param f:       Function f(x) handler
-    :param df:      Derivate of f'(x) handler
     :param x0:      Inital guess
     :param maxit:   Max number of iterations
     :param tol:     Tolerance
@@ -121,12 +120,14 @@ def stefessen(f, x0, tol=1e-3, maxit=20000):
         >>>
         >>> from math import exp
         >>> f = lambda x: exp(x) - 3*x**2
-        >>> r.stefessen(f, 4, tol=1e-3, maxit=200)
+        >>> r.steffenssen(f, 4, tol=1e-3, maxit=200)
         (3.7330790286333886, 55, 3.3912123882373635e-06)
 
     Reference:
     [1]J. P. Jaiswal, NEW EFFICIENT STEFFENSEN TYPE METHOD FOR SOLVING NONLINEAR EQUATIONS
     http://arxiv.org/pdf/1304.4703.pdf
+
+    [2] http://www.cs.technion.ac.il/~asidi/Sidi_Journal_Papers/P091_JOMA2006.Vol6.pdf
     """
 
     x = x0
@@ -137,14 +138,14 @@ def stefessen(f, x0, tol=1e-3, maxit=20000):
         it += 1
 
         y = f(x)
-        x = x - y ** 2 / (f(x + y) - y)
+        x -= y ** 2 / (f(x + y) - y)
 
         error = abs(y)
         if error < tol:
             break
 
     if error > tol:
-        raise RootFindErrror("Root not found ", x, it=it)
+        raise RootFindErrror("Root not found ", x=x, it=it)
 
     return x, it, error
 
@@ -187,7 +188,7 @@ def stefessen2(f, x0, tol=1e-3, maxit=20000):
     return x, it, error
 
 
-def regualfalsi(f, x0, x1, tol=1e-3, maxit=20000, debug=False):
+def regualfalsi(f, x0, x1, tol=1e-3, maxit=200, debug=False):
     """
     Solve equation using the false position method
     Regula-Falsi position
@@ -213,14 +214,19 @@ def regualfalsi(f, x0, x1, tol=1e-3, maxit=20000, debug=False):
         y1 = f(x1)
         error = abs(y1)
 
-        if debug:
-            print x0, x1, y0, y1, it, error
+        #print x, it, error
+
+        # if debug:
+        #     print x0, x1, y0, y1, it, error
 
         # error = abs(x - x1)
 
 
         if error < tol:
             break
+
+        if abs(y1-y0)< 1e-6:
+            raise  RootFindErrror("Regula falsi can't compute root y1=y0, denominator zero ", it=str(it), error=str(error), x=str(x))
 
         x = x0 - y0 * (x1 - x0) / (y1 - y0)
 
@@ -232,8 +238,10 @@ def regualfalsi(f, x0, x1, tol=1e-3, maxit=20000, debug=False):
         else:
             x1 = x
 
+
+
     if error > tol:
-        raise RootFindErrror("Root not found ", x, it=it)
+        raise RootFindErrror("Root not found ", x=x, it=it, error=error)
 
     return x, it, error
 
