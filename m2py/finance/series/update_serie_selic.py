@@ -18,6 +18,8 @@ Submit	    Consultar
 import requests
 
 from m2py.finance.timeserie import Tserie, cumproduct
+from m2py.finance import dtime
+
 
 safari = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30"
 
@@ -97,23 +99,32 @@ def get_selic(start_date, end_date):
 
 
 
-dates, rates = get_selic("1/7/2000", "07/12/2014")
-
-dates = dates[:-1]
-rates = rates[:-1]
 
 
 
 def build_database():
+
+    now = dtime.date2str_dmy(dtime.dtime('now'), '/')
+
+    print "Downloading Database to : ", now
+
+    dates, rates = get_selic("01/07/2000", now)
+    dates = dates[:-1]
+    rates = rates[:-1]
+
+
     dailyfactor = lambda s: round((1+s/100.0)**(1/252.0), 8)
     factors = map(dailyfactor, rates)
     acumfactor = cumproduct(factors)
 
+    acumfactor.insert(0, 1.0)
+    acumfactor = acumfactor[:-1]
+    acumfactor= map(lambda x: x*1000.0, acumfactor)
 
 
     ts = Tserie(dates,
                 [rates, factors, acumfactor],
-                headers=['rate', 'factor', 'accum'],
+                headers=['rate', 'factor', 'VNA'],
                 name = "Taxa SELIC")
 
 

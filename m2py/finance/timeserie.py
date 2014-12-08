@@ -91,12 +91,16 @@ class Tserie:
         return Tserie(time=table2[0], data=table2[1:])
 
     def get_date(self, date, prevbusday=False):
-        date = dtime.date_dmy(date)
+        date = dtime.dtime(date)
         table = self.get_table()
 
         if prevbusday:
             date = daycounting.prevbusday(date)
-        return filter(lambda d: d[0] == date, table)
+
+
+
+        return filter(lambda d: d[0].day == date.day and d[0].month == date.month
+                                and d[0].year == date.year, table)
 
     def add_column(self, column, name=''):
         self.data.append(column)

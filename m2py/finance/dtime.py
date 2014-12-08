@@ -331,16 +331,7 @@ def dates2time(datelst, number_of_days=360.0):
     timevector = map(lambda d: (d - zerodate).days / number_of_days, datelst)
     return timevector
 
-def date2time_du(datelst):
-    """
-    Retorna Série Temporal em dias úteis
 
-    :param datelst:
-    :return:
-    """
-    zerodate = datelst[0]
-    timevector = map(lambda d:  nbdays_br(zerodate, d), datelst)
-    return timevector
 
 def utcnow():
     return datetime.utcnow()
@@ -500,9 +491,15 @@ def dtime(*param):
         if param[0] == 'now':
             return datetime.now()
 
+        if param[0] == 'today':
+            return datetime.today()
+
+        if param[0] == 'tomorrow':
+            return timedelta(days=1) + datetime.today()
+
         datestr = param[0]
 
-        if dtime.flag:
+        if not dtime.flag:
             return parse_date(datestr)
         else:
             return parse_date2(datestr)
@@ -511,3 +508,297 @@ def dtime(*param):
         return datetime(*param)
 
 dtime.flag = False
+
+
+
+
+Date = lambda datestr: datetime.datetime.strptime(datestr, "%d-%m-%Y")
+
+
+import utils
+import shelve
+__brazil_holydays_database = utils.resource_path("holydays/brazil_holydays.dat")
+sh = shelve.open(__brazil_holydays_database)
+brazil_holydays = sh["brholydays"]
+sh.close()
+
+def is_leap_year(date):
+    import calendar
+
+    return calendar.isleap(date.year)
+
+
+def eomday(year, month):
+    """
+    Returns the last day of month
+
+    :param year:    Year Integer
+    :param month:   Month Interger  1-12
+    :return:
+    """
+    import calendar
+
+    return filter(lambda x: x != 0, calendar.monthcalendar(year, month)[-1])[-1]
+
+
+actual_actual = lambda date1, date2: (date2 - date1).days
+
+
+def days360(date1, date2):
+    # date1 = Date(date1)
+    # date2 = Date(date2)
+
+    from calendar import isleap
+
+    Y1, M1, D1 = date2ymd(date1)
+    Y2, M2, D2 = date2ymd(date2)
+
+    if D1 == 31:
+        D1 = 30
+
+    if D2 == 31 and D1 in [30, 31]:
+        D2 = 30
+
+    if M1 == 2 and ((D1 == 28 and not isleap(Y1)) or D1 == 29):
+        D1 = 30
+
+    N = 360 * (Y2 - Y1) + 30 * (M2 - M1) + (D2 - D1)
+    return N
+
+
+def days360e(date1, date2):
+    # date1 = Date(date1)
+    # date2 = Date(date2)
+
+    Y1, M1, D1 = date2ymd(date1)
+    Y2, M2, D2 = date2ymd(date2)
+
+    if D1 == 31:
+        D1 = 30
+
+    if D2 == 31:
+        D2 = 30
+
+    N = 360 * (Y2 - Y1) + 30 * (M2 - M1) + (D2 - D1)
+    return N
+
+
+def days360isda(date1, date2):
+    # date1 = Date(date1)
+    # date2 = Date(date2)
+
+    Y1, M1, D1 = date2ymd(date1)
+    Y2, M2, D2 = date2ymd(date2)
+
+    if D1 == 31:
+        D1 = 30
+
+        if D2 == 31:
+            D2 = 30
+
+    N = 360 * (Y2 - Y1) + 30 * (M2 - M1) + (D2 - D1)
+    return N
+
+
+def days360psa(date1, date2):
+    # date1 = Date(date1)
+    # date2 = Date(date2)
+
+    Y1, M1, D1 = date2ymd(date1)
+    Y2, M2, D2 = date2ymd(date2)
+
+    if D1 == 31:
+        D1 = 30
+
+    if M1 == 2 and D1 == eomday(Y1, 2):
+        D1 = 30
+
+    if D1 == 30:
+        D2 = 30
+
+    N = 360 * (Y2 - Y1) + 30 * (M2 - M1) + (D2 - D1)
+    return N
+
+
+def daysbus(date1, date2, holydays=brazil_holydays):
+    return networkdays(date1 , date2, holydays)
+
+
+def isbusday(date, holydays=brazil_holydays):
+
+    #print dict(date=date, week=date.isoweekday())
+
+    if date.isoweekday() in [6, 7] or date in holydays:
+        return False
+    else:
+        return True
+
+    #return date.weekday() not in [5, 6] and date not in holydays
+
+def nextbusday(date):
+    """
+    Get the first business day after some date,
+    if the date is as business day returns the date.
+
+    :param date:
+    :return:
+    """
+    nextdate = date
+
+    while True:
+
+        if isbusday(nextdate):
+            return nextdate
+        nextdate = daysadd(nextdate, 1)
+
+def prevbusday(date):
+    """
+    Get the first business day before some date,
+    if the date is as business day returns the date.
+
+    :param date:
+    :return:
+    """
+    nextdate = date
+
+    while True:
+
+        if isbusday(nextdate):
+            return nextdate
+        nextdate = daysadd(nextdate, -1)
+
+
+def daysdif(StartDate, EndDate, Basis=0):
+    """
+
+    :param StartDate:
+    :param EndDate:
+    :param Basis:
+    :return:
+
+    StartDate	Enter as serial date numbers or date strings.
+    EndDate	Enter as serial date numbers or date strings.
+
+
+    Basis	"(Optional) Day-count basis of the instrument. A vector
+        0 = actual/actual (default)
+        1 = 30/360 (SIA)                United States
+        2 = actual/360
+        3 = actual/365
+        4 = 30/360 (PSA)
+        5 = 30/360 (ISDA)
+        6 = 30/360 (European)
+        7 = actual/365 (Japanese)
+        8 = actual/actual (ISMA)
+        9 = actual/360 (ISMA)
+        10 = actual/365 (ISMA)
+        11 = 30/360E (ISMA)
+        12 = actual/365 (ISDA)
+        13 = BUS/252                    Brazil Government Bonds
+    """
+    date1 = Date(StartDate)
+    date2 = Date(EndDate)
+    day_counting = daysdif.convention_list[str(Basis)]
+
+    ndays = day_counting(date1, date2)
+    return ndays
+
+daysdif.convention_list = {
+    '0': actual_actual,
+    '2': actual_actual,
+    '3': actual_actual,
+    '7': actual_actual,
+    '8': actual_actual,
+    '9': actual_actual,
+    '10': actual_actual,
+    '12': actual_actual,
+
+    '1': days360,
+    '4': days360psa,
+    '5': days360isda,
+    '6': days360e,
+    '11': days360e,
+
+    '13': daysbus,
+}
+
+
+def yearfrac(StartDate, EndDate, Basis):
+    """
+
+    :param StartDate:
+    :param EndDate:
+    :param Basis:
+    :return:
+
+    StartDate	Enter as serial date numbers or date strings.
+    EndDate	Enter as serial date numbers or date strings.
+
+
+    Basis	"(Optional) Day-count basis of the instrument. A vector
+        0 = actual/actual (default)
+        1 = 30/360 (SIA)                United States
+        2 = actual/360
+        3 = actual/365
+        4 = 30/360 (PSA)
+        5 = 30/360 (ISDA)
+        6 = 30/360 (European)
+        7 = actual/365 (Japanese)
+        8 = actual/actual (ISMA)
+        9 = actual/360 (ISMA)
+        10 = actual/365 (ISMA)
+        11 = 30/360E (ISMA)
+        12 = actual/365 (ISDA)
+        13 = BUS/252                    Brazil Government Bonds
+
+    Reference: http://www.mathworks.com/help/finance/yearfrac.html
+    """
+    denom = yearfrac.denominators[str(Basis)]
+    Ndays = daysdif(StartDate, EndDate, Basis)
+    return Ndays / denom
+
+
+yearfrac.denominators = {
+    # 360 days
+    '1': 360.0,
+    '2': 360.0,
+    '4': 360.0,
+    '5': 360.0,
+    '6': 360.0,
+    '9': 360.0,
+    '11': 360.0,
+
+    # 365
+    '3': 365.0,
+    '7': 365.0,
+    '10': 365.0,
+    '12': 365.0,
+
+    # 252 Business days ( Brazil)
+    '13': 252.0,
+}
+
+
+def daysadd(StartDate, NumDays, Basis=0):
+    """
+
+    :param StartDate:
+    :param NumDays:
+    :param Basis:
+    :return:
+
+    Reference: http://www.mathworks.com/help/finance/daysadd.html
+    """
+    #print StartDate
+    return StartDate + datetime.timedelta(days=NumDays)
+
+def date2offset_bu(datelst):
+    """
+    Transform date list into list of date intervals in business days.
+
+    :param datelst: List of datetime.datetime objects [ d0, d1, d2, d3 .... , dn ]
+    :return: List of date intervals [ 0, d1-d0, d2-d0, d3 - d0, ..., dn - d0]
+    """
+    zerodate = datelst[0]
+    timevector = map(lambda d: daysbus(zerodate, d), datelst)
+    return timevector
