@@ -7,9 +7,9 @@ $ python -c "import dtime ; from pprint import pprint ; import shelve ; holydays
 
 from datetime import timedelta
 from datetime import datetime
-from utils import resource_path
-import shelve
+import re
 
+#from dateutil.parser import parser
 
 # started from the code of Casey Webster at
 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/ddd39a02644540b7
@@ -150,18 +150,6 @@ def date2ymd(date):
     :return: tuple (year, month, day)
     """
     return date.year, date.month, date.day
-
-
-def parse_date(date, format="%d/%m/%Y"):
-
-    # date is a tuple (year, month, time)
-    if isinstance(date, tuple):
-        date = datetime(*date)
-
-    elif isinstance(date, str):
-            date = datetime.strptime(date, format)
-
-    return date
 
 def date_dmy(datestr, separator="/"):
     """
@@ -363,7 +351,7 @@ def now():
 
 def datenum2datetime(matlab_datenum):
     """
-    Convert Matlab datenum integer to python datetime.datetime object
+    Convert Matlab dtime integer to python datetime.datetime object
 
     :param matlab_datenum: Matalab date integer representation
     :type  matlab_datenum: int
@@ -378,12 +366,148 @@ def datenum2datetime(matlab_datenum):
 def datetime2datenum(dt):
     """
     Convert datetime.datetime object to Matalab date representation
-    datenum equivalent
+    dtime equivalent
 
     :param dt:  Datetime.datetime object
-    :return:    datenum number Matlab representation
+    :return:    dtime number Matlab representation
     """
     ord = dt.toordinal()
     mdn = dt + timedelta(days = 366)
     frac = (dt-datetime(dt.year,dt.month,dt.day,0,0,0)).seconds / (24.0 * 60.0 * 60.0)
     return mdn.toordinal() + frac
+
+
+__date_patterns = {
+
+    '%d/%m' : re.compile( r'^\d{2}/\d{2}$', re.M),
+
+    # 'yyyy-mm-dd'
+    '%Y-%m-%d': re.compile("\d{4}-\d\d-\d\d"),
+
+    '%Y/%m/%d': re.compile("\d{4}/\d{2}/\d{2}"),
+
+    # yyyymmdd
+    '%Y%m%d' : re.compile('\d{8}$'),
+
+    # dd/mm/yy
+    '%d/%m/%y': re.compile("\d{2}/\d{2}/\d{2}$"),
+
+    # dd/mm/yyyy
+    '%d/%m/%Y': re.compile("\d{2}/\d{2}/\d{4}"),
+
+
+    '%d-%m-%Y': re.compile("\d{2}-\d{2}-\d{4}"),
+
+    # yyyy
+    r'%Y': re.compile("\d{4}$"),
+
+    '%Y-%m-%d %H:%M:%S': re.compile('\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'),
+    '%Y%m%dT%H%M%S' : re.compile('\d{8}T\d{6}'),
+
+    '%H:%M:%S' : re.compile('\d{2}:\d{2}:\d{2}'),
+}
+
+# American Dates
+__date_patterns2 = {
+
+    '%m/%d' : re.compile( r'^\d{2}/\d{2}$', re.M),
+
+    # 'yyyy-mm-dd'
+    '%Y-%m-%d': re.compile("\d{4}-\d{2}-\d{2}"),
+
+    '%Y/%m/%d': re.compile("\d{4}/\d{2}/\d{2}"),
+
+    # yyyymmdd
+    '%Y%m%d' : re.compile('\d{8}$'),
+
+    # /mm/dd/yy
+    '%m/%d/%y': re.compile("\d{2}/\d{2}/\d{2}$"),
+
+    # /mm/dd/yyyy
+    '%m/%d/%Y': re.compile("\d{2}/\d{2}/\d{4}"),
+
+
+    '%d-%m-%Y': re.compile("\d{2}-\d{2}-\d{4}"),
+
+    # yyyy
+    r'%Y': re.compile("\d{4}$"),
+
+    '%Y-%m-%d %H:%M:%S': re.compile('\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'),
+    '%Y%m%dT%H%M%S' : re.compile('\d{8}T\d{6}'),
+
+    '%H:%M:%S' : re.compile('\d{2}:\d{2}:\d{2}'),
+}
+
+
+def parse_date(datestr):
+    """
+    Parse date string
+
+    :param datestr:
+    :return:
+
+    Convention: Day before Month
+    """
+    for fmt, pat in __date_patterns.iteritems():
+            if pat.match(datestr):
+
+                #print "-----------------"
+                #print "datestr = ", datestr, "fmt = ", fmt
+
+                return datetime.strptime(datestr, fmt)
+                #return datetime.strptime(datestr, fmt)
+
+                #print "-----------------"
+
+def parse_date2(datestr):
+    """
+    Parse Americam date string
+
+    :param datestr:
+    :return:
+
+    Convention: Month before day
+    """
+    for fmt, pat in __date_patterns2.iteritems():
+            if pat.match(datestr):
+
+                #print "-----------------"
+                #print "datestr = ", datestr, "fmt = ", fmt
+
+                return datetime.strptime(datestr, fmt)
+
+
+def dtime(*param):
+    """
+    DateNumber = dtime(t)example
+    DateNumber = dtime(DateString)
+    DateNumber = dtime(DateString,formatIn)example
+    DateNumber = dtime(DateString,PivotYear)
+    DateNumber = dtime(DateString,formatIn,PivotYear)example
+    DateNumber = dtime(DateVector)example
+    DateNumber = dtime(Y,M,D)example
+    DateNumber = dtime(Y,M,D,H,MN,S)
+
+    :param param:
+    :return:
+    """
+
+    if len(param) ==  1:
+
+        if isinstance(param[0], datetime):
+            return param[0]
+
+        if param[0] == 'now':
+            return datetime.now()
+
+        datestr = param[0]
+
+        if dtime.flag:
+            return parse_date(datestr)
+        else:
+            return parse_date2(datestr)
+
+    if len(param) >= 3:
+        return datetime(*param)
+
+dtime.flag = False
