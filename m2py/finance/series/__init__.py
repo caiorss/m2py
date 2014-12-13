@@ -11,6 +11,8 @@ import os as __os__
 
 from m2py.finance.timeserie import plot_against
 
+import ipea
+
 __thisdir = __utils__.this_dir()
 datadir = datasets_dir = __utils__.resource_path("datasets")
 datafiles = __os__.listdir(datadir)

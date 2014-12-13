@@ -9,7 +9,7 @@ from datetime import timedelta
 from datetime import datetime
 import re
 
-#from dateutil.parser import parser
+# from dateutil.parser import parser
 
 # started from the code of Casey Webster at
 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/ddd39a02644540b7
@@ -19,7 +19,7 @@ import re
 
 # Define the weekday mnemonics to match the date.weekday function
 (MON, TUE, WED, THU, FRI, SAT, SUN) = range(7)
-weekends=(SAT,SUN)
+weekends = (SAT, SUN)
 
 
 #-------------------------------------------------------#
@@ -34,23 +34,26 @@ def networkdays(start_date, end_date, holidays=[]):
     # subtract out any working days that fall in the 'shortened week'
     for d in range(1, 8 - extra_days):
         if (end_date + timedelta(d)).weekday() not in weekends:
-             num_workdays -= 1
+            num_workdays -= 1
     # skip holidays that fall on weekends
-    holidays =  [x for x in holidays if x.weekday() not in weekends]
+    holidays = [x for x in holidays if x.weekday() not in weekends]
     # subtract out any holidays
     for d in holidays:
         if start_date <= d <= end_date:
             num_workdays -= 1
     return num_workdays
 
-def _in_between(a,b,x):
+
+def _in_between(a, b, x):
     return a <= x <= b or b <= x <= a
+
 
 def __cmp(a, b):
     return (a > b) - (a < b)
 
+
 def workday(start_date, days=0, holidays=[]):
-    full_weeks, extra_days = divmod(days,7 - len(weekends))
+    full_weeks, extra_days = divmod(days, 7 - len(weekends))
     new_date = start_date + timedelta(weeks=full_weeks)
     for i in range(extra_days):
         new_date += timedelta(days=1)
@@ -62,11 +65,11 @@ def workday(start_date, days=0, holidays=[]):
 
     # avoid this if no holidays
     if holidays:
-        delta = timedelta(days=1 * __cmp(days,0))
+        delta = timedelta(days=1 * __cmp(days, 0))
         # skip holidays that fall on weekends
-        holidays =  [x for x in holidays if x.weekday() not in weekends ]
-        holidays =  [x for x in holidays if x != start_date ]
-        for d in sorted(holidays, reverse = (days < 0)):
+        holidays = [x for x in holidays if x.weekday() not in weekends]
+        holidays = [x for x in holidays if x != start_date]
+        for d in sorted(holidays, reverse=(days < 0)):
             # if d in between start and current push it out one working day
             if _in_between(start_date, new_date, d):
                 new_date += delta
@@ -92,7 +95,7 @@ def ndays(date1, date2):
         date2 = datetime(*date2)
 
     Ndays = (date2 - date1).days
-    Ndays  = abs(Ndays) -1
+    Ndays = abs(Ndays) - 1
     return Ndays
 
 
@@ -114,7 +117,7 @@ def nbdays(date1, date2, holydays):
         date1 = datetime(*date1)
     if isinstance(date2, tuple):
         date2 = datetime(*date2)
-    return networkdays(date1,date2, holydays)
+    return networkdays(date1, date2, holydays)
 
 
 def nbdays_br(date1, date2):
@@ -134,7 +137,7 @@ def nbdays_br(date1, date2):
     :rtype:       int
     """
 
-    return networkdays(date1 , date2, [])
+    return networkdays(date1, date2, [])
 
 
 #------------------------------------------------------#
@@ -150,6 +153,7 @@ def date2ymd(date):
     :return: tuple (year, month, day)
     """
     return date.year, date.month, date.day
+
 
 def date_dmy(datestr, separator="/"):
     """
@@ -169,6 +173,7 @@ def date_dmy(datestr, separator="/"):
     fmt = "%d{separator}%m{separator}%Y".format(separator=separator)
     return datetime.strptime(datestr, fmt)
 
+
 def date_mdy(datestr, separator="/"):
     """
     Parse American Date Format  mm/dd/yyyy
@@ -187,6 +192,7 @@ def date_mdy(datestr, separator="/"):
     """
     fmt = "%m{separator}%d{separator}%Y".format(separator=separator)
     return datetime.strptime(datestr, fmt)
+
 
 def date_ymd(datestr, separator="/"):
     """
@@ -229,12 +235,13 @@ def duration360days(Ndays):
     1321 days = 3 years, 8 months and 1 day
     """
 
-    years = int(Ndays/360)
-    rem = Ndays%360
-    months = int(rem/30)
-    days = rem%30
+    years = int(Ndays / 360)
+    rem = Ndays % 360
+    months = int(rem / 30)
+    days = rem % 30
 
     return (years, months, days)
+
 
 #------------------------------------------------------#
 #    DATE object to String                             #
@@ -257,6 +264,7 @@ def date2str_dmy(date, separator="/"):
     fmt = "%d{separator}%m{separator}%Y".format(separator=separator)
     return date.strftime(fmt)
 
+
 def date2str_mdy(date, separator="/"):
     """
 
@@ -274,6 +282,7 @@ def date2str_mdy(date, separator="/"):
     """
     fmt = "%m{separator}%d{separator}%Y".format(separator=separator)
     return date.strftime(fmt)
+
 
 def date2str_ymd(date, separator="/"):
     """
@@ -294,7 +303,6 @@ def date2str_ymd(date, separator="/"):
     """
     fmt = "%Y{separator}%m{separator}%d".format(separator=separator)
     return date.strftime(fmt)
-
 
 
 def ymd2date(y, m, d):
@@ -356,9 +364,9 @@ def dates2time(datelst, number_of_days=360.0):
     return timevector
 
 
-
 def utcnow():
     return datetime.utcnow()
+
 
 def now():
     return datetime.now()
@@ -375,7 +383,7 @@ def datenum2datetime(matlab_datenum):
     """
 
     return datetime.fromordinal(matlab_datenum) + \
-           timedelta(days=matlab_datenum % 1) - timedelta(days = 366)
+           timedelta(days=matlab_datenum % 1) - timedelta(days=366)
 
 
 def datetime2datenum(dt):
@@ -387,14 +395,14 @@ def datetime2datenum(dt):
     :return:    dtime number Matlab representation
     """
     ord = dt.toordinal()
-    mdn = dt + timedelta(days = 366)
-    frac = (dt-datetime(dt.year,dt.month,dt.day,0,0,0)).seconds / (24.0 * 60.0 * 60.0)
+    mdn = dt + timedelta(days=366)
+    frac = (dt - datetime(dt.year, dt.month, dt.day, 0, 0, 0)).seconds / (24.0 * 60.0 * 60.0)
     return mdn.toordinal() + frac
 
 
 __date_patterns = {
 
-    '%d/%m' : re.compile( r'^\d{2}/\d{2}$', re.M),
+    '%d/%m': re.compile(r'^\d{2}/\d{2}$', re.M),
 
     # 'yyyy-mm-dd'
     '%Y-%m-%d': re.compile("\d{4}-\d\d-\d\d"),
@@ -402,7 +410,7 @@ __date_patterns = {
     '%Y/%m/%d': re.compile("\d{4}/\d{2}/\d{2}"),
 
     # yyyymmdd
-    '%Y%m%d' : re.compile('\d{8}$'),
+    '%Y%m%d': re.compile('\d{8}$'),
 
     # dd/mm/yy
     '%d/%m/%y': re.compile("\d{2}/\d{2}/\d{2}$"),
@@ -417,15 +425,15 @@ __date_patterns = {
     r'%Y': re.compile("\d{4}$"),
 
     '%Y-%m-%d %H:%M:%S': re.compile('\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'),
-    '%Y%m%dT%H%M%S' : re.compile('\d{8}T\d{6}'),
+    '%Y%m%dT%H%M%S': re.compile('\d{8}T\d{6}'),
 
-    '%H:%M:%S' : re.compile('\d{2}:\d{2}:\d{2}'),
+    '%H:%M:%S': re.compile('\d{2}:\d{2}:\d{2}'),
 }
 
 # American Dates
 __date_patterns2 = {
 
-    '%m/%d' : re.compile( r'^\d{2}/\d{2}$', re.M),
+    '%m/%d': re.compile(r'^\d{2}/\d{2}$', re.M),
 
     # 'yyyy-mm-dd'
     '%Y-%m-%d': re.compile("\d{4}-\d{2}-\d{2}"),
@@ -433,7 +441,7 @@ __date_patterns2 = {
     '%Y/%m/%d': re.compile("\d{4}/\d{2}/\d{2}"),
 
     # yyyymmdd
-    '%Y%m%d' : re.compile('\d{8}$'),
+    '%Y%m%d': re.compile('\d{8}$'),
 
     # /mm/dd/yy
     '%m/%d/%y': re.compile("\d{2}/\d{2}/\d{2}$"),
@@ -448,9 +456,9 @@ __date_patterns2 = {
     r'%Y': re.compile("\d{4}$"),
 
     '%Y-%m-%d %H:%M:%S': re.compile('\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'),
-    '%Y%m%dT%H%M%S' : re.compile('\d{8}T\d{6}'),
+    '%Y%m%dT%H%M%S': re.compile('\d{8}T\d{6}'),
 
-    '%H:%M:%S' : re.compile('\d{2}:\d{2}:\d{2}'),
+    '%H:%M:%S': re.compile('\d{2}:\d{2}:\d{2}'),
 }
 
 
@@ -464,15 +472,15 @@ def parse_date(datestr):
     Convention: Day before Month
     """
     for fmt, pat in __date_patterns.iteritems():
-            if pat.match(datestr):
+        if pat.match(datestr):
+            #print "-----------------"
+            #print "datestr = ", datestr, "fmt = ", fmt
 
-                #print "-----------------"
-                #print "datestr = ", datestr, "fmt = ", fmt
+            return datetime.strptime(datestr, fmt)
+            #return datetime.strptime(datestr, fmt)
 
-                return datetime.strptime(datestr, fmt)
-                #return datetime.strptime(datestr, fmt)
+            #print "-----------------"
 
-                #print "-----------------"
 
 def parse_date2(datestr):
     """
@@ -484,12 +492,11 @@ def parse_date2(datestr):
     Convention: Month before day
     """
     for fmt, pat in __date_patterns2.iteritems():
-            if pat.match(datestr):
+        if pat.match(datestr):
+            #print "-----------------"
+            #print "datestr = ", datestr, "fmt = ", fmt
 
-                #print "-----------------"
-                #print "datestr = ", datestr, "fmt = ", fmt
-
-                return datetime.strptime(datestr, fmt)
+            return datetime.strptime(datestr, fmt)
 
 
 def dtime(*param):
@@ -507,7 +514,7 @@ def dtime(*param):
     :return:
     """
 
-    if len(param) ==  1:
+    if len(param) == 1:
 
         if isinstance(param[0], datetime):
             return param[0]
@@ -531,20 +538,23 @@ def dtime(*param):
     if len(param) >= 3:
         return datetime(*param)
 
+
 dtime.flag = False
 
 
 
 
-Date = lambda datestr: datetime.datetime.strptime(datestr, "%d-%m-%Y")
+#Date = lambda datestr: datetime.datetime.strptime(datestr, "%d-%m-%Y")
 
 
 import utils
 import shelve
+
 __brazil_holydays_database = utils.resource_path("holydays/brazil_holydays.dat")
 sh = shelve.open(__brazil_holydays_database)
 brazil_holydays = sh["brholydays"]
 sh.close()
+
 
 def is_leap_year(date):
     import calendar
@@ -563,6 +573,7 @@ def eomday(year, month):
     import calendar
 
     return filter(lambda x: x != 0, calendar.monthcalendar(year, month)[-1])[-1]
+
 
 def days_actual(date1, date2):
     return (date2 - date1).days
@@ -648,11 +659,10 @@ def days360psa(date1, date2):
 
 
 def daysbus(date1, date2, holydays=brazil_holydays):
-    return networkdays(date1 , date2, holydays)
+    return networkdays(date1, date2, holydays)
 
 
 def isbusday(date, holydays=brazil_holydays):
-
     #print dict(date=date, week=date.isoweekday())
 
     if date.isoweekday() in [6, 7] or date in holydays:
@@ -660,7 +670,8 @@ def isbusday(date, holydays=brazil_holydays):
     else:
         return True
 
-    #return date.weekday() not in [5, 6] and date not in holydays
+        #return date.weekday() not in [5, 6] and date not in holydays
+
 
 def nextbusday(date):
     """
@@ -677,6 +688,40 @@ def nextbusday(date):
         if isbusday(nextdate):
             return nextdate
         nextdate = daysadd(nextdate, 1)
+
+
+def daysaddbu(date, business_days):
+    """
+    :param date:
+    :param business_days:
+    :return:
+    """
+
+    nextdate = date
+    counter = 0
+
+    if business_days > 0:
+        sign = 1
+    elif business_days < 0:
+        sign = -1
+    else:
+        return date
+
+    #print "sign = ", sign
+
+    while True:
+
+        #print nextdate, counter, isbusday(nextdate)
+
+        nextdate = nextdate + sign * timedelta(days=1)
+        if isbusday(nextdate):
+            counter += sign
+
+        if counter == business_days:
+            return nextdate
+
+            #raw_input(">>")
+
 
 def prevbusday(date):
     """
@@ -729,6 +774,7 @@ def daysdif(StartDate, EndDate, Basis=0):
 
     ndays = day_counting(date1, date2)
     return ndays
+
 
 daysdif.convention_list = {
     '0': actual_actual,
@@ -819,6 +865,7 @@ def daysadd(StartDate, NumDays, Basis=0):
     #print StartDate
     return StartDate + datetime.timedelta(days=NumDays)
 
+
 def date2offset_bu(datelst):
     """
     Transform date list into list of date intervals in business days.
@@ -829,6 +876,7 @@ def date2offset_bu(datelst):
     zerodate = datelst[0]
     timevector = map(lambda d: daysbus(zerodate, d), datelst)
     return timevector
+
 
 def date2ofsset(datelst):
     zerodate = datelst[0]
@@ -855,13 +903,123 @@ def date_range(date1, date2):
     daterng = [date1]
 
     for i in range(Ndays):
-         nextdate = nextdate + timedelta(days=1)
-         daterng.append(nextdate)
+        nextdate = nextdate + timedelta(days=1)
+        daterng.append(nextdate)
 
     return daterng
 
 
+class Date(object):
+    separator = "-"
+
+    def __init__(self, date, format="%Y-%m-%d"):
+        """
+
+        :param date:
+        :type date:  datetime.datetime
+        :param format:
+        :return:
+        """
+
+        self.date = dtime(date)
+        self.format = format
+
+
+    def __str__(self):
+        return self.date.strftime(self.format)
+
+    def __repr__(self):
+        return str(self.date)
+
+
+    def show(self):
+
+        print self.date
+        print self.date.weekday()
+        print self.date.strftime("%A")
+        print self.date.strftime("%B")
+
+
+    def __add__(self, other):
+
+        if isinstance(other, int):
+            return Date(self.date + timedelta(days=other))
+
+        if re.match('^\d+d$', other):
+            days = int(other.split('d')[0])
+            return Date(self.date + timedelta(days=days))
+
+        elif re.match('^\d+m', other):
+            hours = int(other.split('h')[0])
+            return Date(self.date + timedelta(hours=hours))
+
+        elif re.match("\d+bu$", other):
+            days = int(other.split('bu')[0])
+            return Date(daysaddbu(self.date, days))
+
+
+    def __sub__(self, other):
+
+
+        if isinstance(other, int):
+            return Date(self.date + timedelta(days=other))
+
+        elif isinstance(other, datetime):
+            return (self.date - other).days
+
+        elif isinstance(other, Date):
+            return (self.date - Date.date).days
+
+        if re.match('^\d+d$', other):
+            days = int(other.split('d')[0])
+            return Date(self.date - timedelta(days=days))
+
+        elif re.match('^\d+m', other):
+            hours = int(other.split('h')[0])
+            return Date(self.date - timedelta(hours=hours))
+
+        elif re.match("\d+bu$", other):
+            days = int(other.split('bu')[0])
+            return Date(daysaddbu(self.date, -days))
+
+
+    def from_today(self):
+        return (self.date - datetime.today()).days
+
+    def from_today_bu(self):
+        return daysbus(datetime.today(), self.date)
 
 
 
+
+    @property
+    def ymd(self):
+        return self.date.strftime("%Y{sep}%m{sep}%d".format(sep=Date.separator))
+
+    @property
+    def dmy(self):
+        return self.date.strftime("%d{sep}%m{sep}%Y".format(sep=Date.separator))
+
+    @property
+    def mdy(self):
+        return self.date.strftime("%m{sep}%d{sep}%Y".format(sep=Date.separator))
+
+
+    @property
+    def weekday(self):
+        return self.date.isoweekday()
+
+    @property
+    def week(self):
+        return self.date.strftime("%A")
+
+    @property
+    def monthname(self):
+        return self.date.strftime("%B")
+
+    @property
+    def timestamp(self):
+        import time
+
+        return time.mktime(self.date.timetuple())
 
