@@ -6,7 +6,7 @@ Verify in: http://www.anbima.com.br/vna/vna.asp
 """
 
 from m2py.finance import dtime
-from m2py.finance import daycounting
+#from m2py.finance import dtime
 from m2py.finance.timeserie import Tserie
 
 import requests
@@ -19,7 +19,7 @@ headers = {
     'User-Agent': safari
 }
 
-ts = Tserie.from_bin(resource_path("selic2.tsdat"))
+selic = Tserie.from_bin(resource_path("selic2.tsdat"))
 
 
 #ts.info()
@@ -31,7 +31,7 @@ ts = Tserie.from_bin(resource_path("selic2.tsdat"))
 #ts.plot(['rate'])
 #ts.plot(['accum'])
 #ts.to_csv("selic2.txt")
-ts.show()
+#ts.show()
 
 
 
@@ -41,11 +41,11 @@ def get_vna(date):
     date = dtime.dtime(date)
 
     #print "Date ", date
-    #date = daycounting.daysadd(date, -1)
-    date = daycounting.prevbusday(date)
+    #date = dtime.daysadd(date, -1)
+    date = dtime.prevbusday(date)
 
     #print "date = ", date
-    data = ts.get_date(date)
+    data = selic.get_date(date)
     #print "data = ", data
     return round(data[0][-1], 8), date
 

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
+
 """
 from __future__ import division
 
@@ -323,15 +324,30 @@ def __show_usage__(self, arg):
     print __usage__
 
 
-@ipsh.magic("finance_mode")
-def _finance_mode(self, arg):
-    print "Loading Finance package"
-    print "Objects: finance, factors, amortizacao"
+def finance_mode():
+    print """
+    FINANCIAL MODULE
+
+    Name/Short Name
+    ------------------------------------------------------------------------
+    finance/fin     -  Financial calculations PV, FV, PMT, i_pmt, IRR, XIRR,
+    factor          -  Financial factors
+    bonds           -  Bond pricing and evaluation
+    brbonds/br      -  Brazilian bond pricing
+    dtime/dt        -  Date and day counting and operations related to date
+
+    """
     exec ("from m2py.finance import finance, factor", ipsh.user_ns)
     exec ("from m2py.finance import dtime as dt", ipsh.user_ns)
-    exec ("from m2py.finance import daycounting as dc", ipsh.user_ns)
-    exec ("from m2py.finance import brbonds", ipsh.user_ns)
-    exec ("fin = finance", ipsh.user_ns)
+    exec ("from m2py.finance import brbonds as br", ipsh.user_ns)
+    exec ("from m2py.finance import bonds", ipsh.user_ns)
+    ipsh.exec_ns ("fin = finance")
+
+
+
+@ipsh.magic("finance_mode")
+def finance_mode_(self, arg):
+    finance_mode()
 
 
 @ipsh.magic("thermo_mode")
@@ -375,6 +391,8 @@ ion()
     ], hidden=True)
 
 
+    ipsh.exec_ns("from __future__ import division")
+
     # ipsh.load_functions_from_module("extra", ["deg2rad", "rad2deg", "sind", "cosd", "tand", "arctan2d",
     #                                           "eng", "eng2"], hidden=True)
 
@@ -386,11 +404,47 @@ ion()
 
     #ipsh.load_functions_from_module("matplotlib.pylab", ["ion", "plot", "show", "clf", "figure"], hidden=True)
 
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "fin" or sys.argv[1] == "finance":
+            finance_mode()
+
+
     ipsh.run()
 
 
 if __name__ == "__main__":
     main()
 
+
+
+def paste_run():
+    import re
+    from utils import xclip
+    txt = xclip()
+    txt = txt.strip('\n').strip('\r')
+
+    print txt
+
+    # Replace bad character
+    txt = txt.replace('’', "'")
+
+    # Remove lines non starting with >>>
+    lines = filter( lambda x: x.startswith(">>>"), txt.splitlines())
+
+    # Remove >>> from beginning of lines
+    lines = map(lambda x: x.split(">>>")[1].strip(), lines)
+
+
+    #nextxt = "\n".join(lines)
+    #exec(nextxt)
+
+    for line in lines:
+
+        print ">>> ", line
+
+        if re.match(".*=.*", txt):
+            exec(line)
+        else:
+            print eval(line)
 
 

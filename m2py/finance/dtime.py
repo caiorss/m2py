@@ -211,6 +211,30 @@ def format_date(date, fmt):
     return date.strftime(fmt)
 
 
+def duration360days(Ndays):
+    """
+    Convers a number o days into duration tuple (years, months, days)
+    in a 360/30 day counting convention.
+
+    :param Ndays:   Number of days
+    :return:        Tuple (years, monhts, days)
+    :type Ndays:    int
+    :rtype:         tuple(int, int, int)
+
+    Example:
+    >>> from m2py.finance import dtime as dt
+    >>> dt.duration360days(1321)
+    >>> (3, 8, 1)
+
+    1321 days = 3 years, 8 months and 1 day
+    """
+
+    years = int(Ndays/360)
+    rem = Ndays%360
+    months = int(rem/30)
+    days = rem%30
+
+    return (years, months, days)
 
 #------------------------------------------------------#
 #    DATE object to String                             #
@@ -540,6 +564,9 @@ def eomday(year, month):
 
     return filter(lambda x: x != 0, calendar.monthcalendar(year, month)[-1])[-1]
 
+def days_actual(date1, date2):
+    return (date2 - date1).days
+
 
 actual_actual = lambda date1, date2: (date2 - date1).days
 
@@ -802,3 +829,39 @@ def date2offset_bu(datelst):
     zerodate = datelst[0]
     timevector = map(lambda d: daysbus(zerodate, d), datelst)
     return timevector
+
+def date2ofsset(datelst):
+    zerodate = datelst[0]
+    timevector = map(lambda d: days_actual(zerodate, d), datelst)
+    return timevector
+
+
+def date_range(date1, date2):
+    """
+
+    :param date1:
+    :param date2:
+    :type  date1: datetime.datetime
+    :type  date2: datetime.datetime
+    :return:      list( datetime.datetime ... )
+    """
+    date1 = dtime(date1)
+    date2 = dtime(date2)
+
+    Ndays = date2 - date1
+    Ndays = Ndays.days
+    nextdate = date1
+
+    daterng = [date1]
+
+    for i in range(Ndays):
+         nextdate = nextdate + timedelta(days=1)
+         daterng.append(nextdate)
+
+    return daterng
+
+
+
+
+
+

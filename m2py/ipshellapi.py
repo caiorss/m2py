@@ -16,7 +16,7 @@
 
 #from tabulate import tabulate
 #from pprint import pprint
-
+from __future__ import division
 from IPython.terminal.embed import InteractiveShellEmbed
 import os
 import sys
@@ -30,7 +30,7 @@ class Ipshell:
     """
 
     def __init__(self, banner="", exitmsg="", listener=False, startdir=""):
-        self.ipsh = InteractiveShellEmbed( banner1=banner, exit_msg=exitmsg, display_banner=True, user_ns={})
+        self.ipsh = InteractiveShellEmbed( banner1=banner, exit_msg=exitmsg, display_banner=True, user_ns={'division': division})
         self.IP = self.ipsh.get_ipython()
         self.listener = listener
 
@@ -108,6 +108,13 @@ class Ipshell:
     def load_objects(self, dic_objects):
         self.ipsh.user_ns.update(dic_objects)
 
+    def exec_ns(self, code):
+        """
+        Execute code in the user namespace
+        :param code:
+        :return:
+        """
+        exec(code, self.user_ns)
 
 
     @property

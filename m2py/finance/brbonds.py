@@ -5,7 +5,7 @@ Brazilian Bonds Calculation and Validation
 
 """
 import dtime as dt
-import daycounting as dc
+
 
 
 def expsum(x, coefficient, powers):
@@ -54,7 +54,7 @@ def payment_dates(settle, maturity):
 
     dates = filter(lambda d: date_s < d <= date_m, dates)
 
-    dates[0] = dc.daysadd(dates[0], -1)
+    dates[0] = dt.daysadd(dates[0], -1)
 
     return dates
 
@@ -88,14 +88,14 @@ def bond_price(ytm, settle, maturity, couponRate=0.0, facevalue=1000.0, couponda
     for date in coupondates:
         # Number of business days between settle and
         # coupon payment
-        N = dc.daysbus(date0, date)
+        N = dt.daysbus(date0, date)
         f = N / 252.0
 
         #print dict(N=N, f=f, date=dt.date2str_dmy(date))
 
         PV += round(1 / (1 + ytm) ** f, 8)
 
-    Nm = dc.daysbus(date0, daten)
+    Nm = dt.daysbus(date0, daten)
     fm = Nm / 252.0
     PV = facevalue * (couponRate * PV + round(1 / (1 + ytm) ** fm, 8))
     return round(PV, 2)
@@ -142,7 +142,7 @@ def bond_yield(price, couponRate, settle, maturity, facevalue=1000.0):
     for date in coupondates:
         # Number of business days between settle and
         # coupon payment
-        N = dc.daysbus(date0, date)
+        N = dt.daysbus(date0, date)
         c = N / 252.0
 
         #print dict(c=c, N=N)
@@ -268,10 +268,10 @@ def test_payment_dates_br():
 # d0 = dt.date_dmy('01/01/2008')
 # print d0.isoweekday()
 #
-# print dc.isbusday(dt.date_dmy('6/12/2014'))
-# print dc.isbusday(dt.date_dmy('01/07/2007'))
-# print dc.isbusday(dt.date_dmy('01/01/2008'))
-# print dc.isbusday(dt.date_dmy('15/12/2014'))
+# print dt.isbusday(dt.date_dmy('6/12/2014'))
+# print dt.isbusday(dt.date_dmy('01/07/2007'))
+# print dt.isbusday(dt.date_dmy('01/01/2008'))
+# print dt.isbusday(dt.date_dmy('15/12/2014'))
 #
 #
-# print dc.nextbusday(dt.date_dmy('06/12/2014'))
+# print dt.nextbusday(dt.date_dmy('06/12/2014'))

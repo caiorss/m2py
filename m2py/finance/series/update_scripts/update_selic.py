@@ -7,16 +7,16 @@ curl -d "dataInicial=01/07/2000&dataFinal=07/12/2014&method=listarTaxaDiaria&tip
 Chrome/12.0.742.112 Safari/534.30" http://www3.bcb.gov.br/selic/consulta/taxaSelic.do
 
 
-dataInicial	01/07/2000
-dataFinal	01/07/2003
-method	listarTaxaDiaria
-tipoApresentacao	arquivo
-Submit	    Consultar
+dataInicial 01/07/2000
+dataFinal   01/07/2003
+method  listarTaxaDiaria
+tipoApresentacao    arquivo
+Submit      Consultar
 
 """
 
 import requests
-
+import os
 from m2py.finance.timeserie import Tserie, cumproduct
 from m2py.finance import dtime
 
@@ -98,11 +98,8 @@ def get_selic(start_date, end_date):
     return parse_columns(columns)
 
 
-
-
-
-
 def build_database():
+    import utils
 
     now = dtime.date2str_dmy(dtime.dtime('now'), '/')
 
@@ -115,25 +112,28 @@ def build_database():
 
     dailyfactor = lambda s: round((1+s/100.0)**(1/252.0), 8)
     factors = map(dailyfactor, rates)
-    acumfactor = cumproduct(factors)
-
-    acumfactor.insert(0, 1.0)
-    acumfactor = acumfactor[:-1]
-    acumfactor= map(lambda x: x*1000.0, acumfactor)
+    VNA = cumproduct(factors)
+    VNA.insert(0, 1.0)
+    VNA = VNA[:-1]
+    VNA= map(lambda x: x*1000.0, VNA)
 
 
     ts = Tserie(dates,
-                [rates, factors, acumfactor],
+                [ rates, factors, VNA],
                 headers=['rate', 'factor', 'VNA'],
                 name = "Taxa SELIC")
 
 
 
-    ts.datprovider = "Banco Central do Brasil"
-    ts.description = "Taxa SELIC Diaŕia desde 1/7/2000"
+    ts.datprovider = "Brazil Central Bank (Banco Central do Brasil)"
+    ts.description = "Brazilian Daily Interest Rate Since 1/7/2000"
     ts.url = "www3.bcb.gov.br/selic/consulta/taxaSelic.do?method=listarTaxaDiaria"
-    ts.to_csv("selic.csv")
-    ts.to_bin("selic2.tsdat")
+
+    thisdir = utils.this_dir()
+    datasets = utils.resource_path("datasets")
+
+    ts.to_csv(os.path.join(thisdir, "../datasets", "selic.csv"))
+    #ts.to_bin("selic.tsdat")
 
 
 if __name__ == "__main__":
