@@ -26,7 +26,7 @@ def mohr2p(Sx, Sy, txy):
     S1= max(S)
     S2= min(S)
     
-    print dict(S1=S1, S2=S2)
+    print(dict(S1=S1, S2=S2))
     
     return (S1, theta1), (S2, theta2)
 

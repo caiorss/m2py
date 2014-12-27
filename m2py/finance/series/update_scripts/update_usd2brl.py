@@ -23,12 +23,12 @@ url = "https://www.debit.com.br/consulta20.php?indexador=12&imes=01&iano=2000&fm
 
 
 # Get column i, from a matrix: list of tuples or list
-column = lambda m, i: map(lambda e: e[i], m)
+column = lambda m, i: [e[i] for e in m]
 
 # Get Transpose Matrix
-transpose = lambda M: zip(*M)
+transpose = lambda M: list(zip(*M))
 
-make_dict = lambda headers, columns: dict(zip(headers, columns))
+make_dict = lambda headers, columns: dict(list(zip(headers, columns)))
 
 def get_nextlink():
     try:
@@ -49,25 +49,25 @@ while True:
 
     dates= s.xlist('//td[@class="ta-left"]')
     values = s.xlist('//td[@class="ta-right"]')
-    data.extend(zip(dates, values))
+    data.extend(list(zip(dates, values)))
 
     pprint(zip(dates, values)[0:10])
 
     s.scrap(link)
     link = get_nextlink()
 
-    print "Next = ", link
+    print("Next = ", link)
 
     if not link:
         break
 
-    print "----------"
+    print("----------")
 
 _dates = column(data, 0)
 values= column(data, 1)
 
-dates  = map( lambda d: dt.date_dmy(d, '/'), _dates)
-values = map( lambda s: float(s.replace(',', '.')), values)
+dates  = [dt.date_dmy(d, '/') for d in _dates]
+values = [float(s.replace(',', '.')) for s in values]
 
 
 usd2brl = Tserie(dates, [values ], headers=["rate"],

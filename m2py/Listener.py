@@ -33,14 +33,14 @@ class Listener():
         try:
             s.bind((self.host, self.port))
         except socket.error as msg:
-            print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+            print(('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]))
             pass
             #sys.exit()
 
         #Start listening on socket
         s.listen(10)
 
-        while 1:
+        while True:
             conn, addr = self.sock.accept()
             code = conn.recv(8049)
             conn.close()
@@ -49,15 +49,15 @@ class Listener():
             #_globals = inspect.currentframe().f_back.f_globals
 
             code = '\n' + code
-            print code
+            print(code)
 
             try:
                 bytecode = compile(code, '<string>', 'exec')
                 exec (bytecode, globals())
             except Exception as err:
-                print err
-                print err.args
-                print err.__class__
+                print(err)
+                print((err.args))
+                print((err.__class__))
 
     def main(self):
 

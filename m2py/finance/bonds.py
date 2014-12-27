@@ -118,19 +118,19 @@ if __name__ == "__main__":
 
     #cashflow = bond_cashflow(950.0, 0.10, 5)
 
-    print bond_cashflow(954.53, 0.080, 2, 2, 1000.0)
+    print(bond_cashflow(954.53, 0.080, 2, 2, 1000.0))
 
     ytm= bond_yield(954.53, 0.080, 2, 2, 1000.0)
 
-    print "ytm = ", ytm
+    print("ytm = ", ytm)
 
     price = bond_price(ytm, 0.08, 2, 2, 1000.0)
 
-    print "price = ", price
+    print("price = ", price)
 
-    print bond_macaulay_duration(0.06, 0.08, 4, 2, 1000.0)
+    print(bond_macaulay_duration(0.06, 0.08, 4, 2, 1000.0))
 
-    print bond_price(0.06, 0.08, 4, 2)
+    print(bond_price(0.06, 0.08, 4, 2))
 
 
     #print finance.irr(cashflow)[0]

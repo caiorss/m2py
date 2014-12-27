@@ -5,7 +5,7 @@ A wraper to IPython to make calculation easier
 like Matlab(R)
 
 """
-from __future__ import division
+
 
 
 __author__ = "Caio Rodrigues Soares Silva"
@@ -13,12 +13,9 @@ __author__ = "Caio Rodrigues Soares Silva"
 # Matplotlib intercative
 # non-blocking
 
-from thermo import xsteam
-import units
-from units import factor
-import constants
-from engine import *
 from IPython.terminal.embed import InteractiveShellEmbed
+
+from .engine import *
 
 
 class Listener():
@@ -26,7 +23,6 @@ class Listener():
     def __init__(self, host='', port=8888):
 
         import socket
-        import sys
 
         self.namespace = None
 
@@ -52,14 +48,14 @@ class Listener():
         try:
             s.bind((self.host, self.port))
         except socket.error as msg:
-            print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+            print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
             pass
             #sys.exit()
 
         #Start listening on socket
         s.listen(10)
 
-        while 1:
+        while True:
             conn, addr = self.sock.accept()
             code = conn.recv(8049)
             conn.close()
@@ -68,15 +64,15 @@ class Listener():
             #_globals = inspect.currentframe().f_back.f_globals
 
             code = '\n' + code
-            print code
+            print(code)
 
             try:
                 bytecode = compile(code, '<string>', 'exec')
                 exec (bytecode, globals())
             except Exception as err:
-                print err
-                print err.args
-                print err.__class__
+                print(err)
+                print(err.args)
+                print(err.__class__)
 
     def main(self):
 
@@ -93,7 +89,7 @@ def __guide(self, arg):
 
     """
 
-    print """
+    print("""
 Quick Ipython Guide
 
 
@@ -192,7 +188,7 @@ CUSTOM LISTING
     arrays    - List all array variables
     strings   - List all string variables
 
-"""
+""")
 
 
 
@@ -256,31 +252,31 @@ def __setprec(self, n, type="fix"):
 
 def include(filename):
     if os.path.exists(filename):
-        execfile(filename)
+        exec(compile(open(filename).read(), filename, 'exec'))
 
 def list_values(self, arg):
     """
     List all numeric types
     """
-    IP.magic(u'whos int float float64 ndarray')
+    IP.magic('whos int float float64 ndarray')
 
 def list_arrays(self, arg):
     """
     Show all ndarrays
     """
-    IP.magic(u'whos ndarray')
+    IP.magic('whos ndarray')
 
 def list_lists(self, arg):
     """
     Show all lists objects
     """
-    IP.magic(u'whos list')
+    IP.magic('whos list')
 
 def list_strings(self, arg):
-    IP.magic(u'whos str')
+    IP.magic('whos str')
 
 def list_functions(self, arg):
-    IP.magic(u'whos function')
+    IP.magic('whos function')
 
 ipshell.define_magic('values', list_values)
 ipshell.define_magic('arrays', list_arrays)
@@ -292,7 +288,6 @@ ipshell.define_magic('setprec', __setprec)
 
 
 import argparse
-import sys
 
 
 

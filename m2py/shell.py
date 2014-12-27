@@ -4,16 +4,16 @@
 
 
 """
-from __future__ import division
+
 
 import os
 import sys
 
-from ipshellapi import Ipshell
+from .ipshellapi import Ipshell
 
-from utils import resource_path
+from .utils import resource_path
 from subprocess import Popen
-from Listener import Listener
+from .Listener import Listener
 
 ipsh = Ipshell()
 
@@ -28,7 +28,7 @@ def list_values(self, arg):
     List all numeric types
     """
 
-    ipsh.get_magic(u'whos int float float64 ndarray')
+    ipsh.get_magic('whos int float float64 ndarray')
 
 
 @ipsh.magic("arrays")
@@ -37,7 +37,7 @@ def list_arrays(self, arg):
     Show all ndarrays
     """
 
-    ipsh.get_magic(u'whos ndarray list')
+    ipsh.get_magic('whos ndarray list')
 
 
 @ipsh.magic("lists")
@@ -45,17 +45,17 @@ def list_lists(self, arg):
     """
     Show all lists objects
     """
-    ipsh.get_magic(u'whos list')
+    ipsh.get_magic('whos list')
 
 
 @ipsh.magic("strings")
 def list_strings(self, arg):
-    ipsh.get_magic(u'whos str')
+    ipsh.get_magic('whos str')
 
 
 @ipsh.magic("functions")
 def list_functions(self, arg):
-    ipsh.get_magic(u'whos function')
+    ipsh.get_magic('whos function')
 
 
 @ipsh.magic("addpath")
@@ -77,13 +77,13 @@ def set_digits(self, args):
     try:
         n, type = args.split()
     except:
-        print """
+        print("""
         $ digits #digits <format>
 
             Example:
             $ digits 5 fix
 
-        """
+        """)
     if type == 'fix':
         base = '.%sf'
 
@@ -123,8 +123,7 @@ def see(self, args):
         type, obj = args.split()
         obj = eval(obj, ipsh.user_ns)
     except Exception as err:
-        print \
-            """
+        print("""
         Explore Object members
 
         Usage:
@@ -144,7 +143,7 @@ def see(self, args):
         In [14]: import os
         In [15]: see f os
         _execvpe ._exists ._get_exports_list ._make_stat_result ...
-        """
+        """)
 
         #print err
         return
@@ -156,39 +155,38 @@ def see(self, args):
 
     if type == "a":
 
-        print " ".join([m[0] for m in members])
+        print(" ".join([m[0] for m in members]))
 
     elif type == "f":
         #funcs = [m[0] for m in members if inspect.isfunction(m[1])]
         funcs = filter_member(inspect.isfunction)
-        print " .".join(funcs)
+        print(" .".join(funcs))
 
     elif type == "file":
-        print inspect.getsourcefile(obj)
+        print(inspect.getsourcefile(obj))
 
     elif type == "c":
         #classes = [m[0] for m in members if inspect.isclass(m[1])]
         classes = filter_member(inspect.isclass)
-        print " .".join(classes)
+        print(" .".join(classes))
 
     elif type == "m":
         #classes = [m[0] for m in members if inspect.isclass(m[1])]
         modules = filter_member(inspect.ismodule)
-        print " ".join(modules)
+        print(" ".join(modules))
 
     elif type == "v":
         #classes = [m[0] for m in members if inspect.isclass(m[1])]
         vfilter = lambda obj: isinstance(obj, float) or isinstance(obj, int)
 
         modules = filter_member(vfilter)
-        print " ".join(modules)
+        print(" ".join(modules))
 
 
 @ipsh.magic("docs")
 def __docs__(self, arg=""):
     if not arg:
-        print \
-            """
+        print("""
         Show PDF documentation
 
         Usage:
@@ -200,17 +198,17 @@ def __docs__(self, arg=""):
 
             <doctype>
                 quickref - Show Quick reference pdf
-        """
+        """)
         return
 
     if arg == "list":
         resourcedir = resource_path("resources")
-        doclist = map(lambda f: f.split('.pdf')[0], os.listdir(resourcedir))
-        print " ".join(doclist)
+        doclist = [f.split('.pdf')[0] for f in os.listdir(resourcedir)]
+        print(" ".join(doclist))
         return
 
     filename = resource_path("resources/%s.pdf" % arg)
-    print filename
+    print(filename)
     Popen("xdg-open %s > /dev/null 2>&1" % filename, shell=True)
 
 
@@ -223,8 +221,8 @@ def __listener__(self, arg):
         listener.stop()
 
     else:
-        print "Turn on/off remote listener server"
-        print "%listener [on|off]"
+        print("Turn on/off remote listener server")
+        print("%listener [on|off]")
 
 
 @ipsh.magic("diary")
@@ -253,7 +251,7 @@ def diary(self, arg):
 
 
 def __show_cheat_sheet__(self, arg):
-    print """
+    print("""
     %<magic> [[args]]
 
     See PDF documentation
@@ -307,7 +305,7 @@ def __show_cheat_sheet__(self, arg):
 
 
 
-    """
+    """)
 
 
 __usage__ = \
@@ -321,11 +319,11 @@ Enter:
 
 
 def __show_usage__(self, arg):
-    print __usage__
+    print(__usage__)
 
 
 def finance_mode():
-    print """
+    print("""
     FINANCIAL MODULE
 
     Name/Short Name
@@ -336,7 +334,7 @@ def finance_mode():
     brbonds/br      -  Brazilian bond pricing
     dtime/dt        -  Date and day counting and operations related to date
 
-    """
+    """)
     exec ("from m2py.finance import finance, factor", ipsh.user_ns)
     exec ("from m2py.finance import dtime as dt", ipsh.user_ns)
     exec ("from m2py.finance import brbonds as br", ipsh.user_ns)
@@ -352,8 +350,8 @@ def finance_mode_(self, arg):
 
 @ipsh.magic("thermo_mode")
 def _thermo_mode(self, arg):
-    print "Loading Thermodynamic package: xsteam, gas"
-    print "to see details type: $ xsteam? or object?"
+    print("Loading Thermodynamic package: xsteam, gas")
+    print("to see details type: $ xsteam? or object?")
     exec ("from thermo import *", ipsh.user_ns)
 
 
@@ -382,7 +380,7 @@ ion()
 
     """, ipsh.user_ns)
 
-    map(ipsh.ipsh.user_ns_hidden.add, ["units", "constants", "vectorize", "eng", "eng2", "cosd", "sind", "tand"])
+    list(map(ipsh.ipsh.user_ns_hidden.add, ["units", "constants", "vectorize", "eng", "eng2", "cosd", "sind", "tand"]))
 
     ipsh.load_functions_from_module("numpy", [
         "array", "sin", "cos", "log", "log10", "exp", "linspace", "logspace", "arange",
@@ -419,20 +417,20 @@ if __name__ == "__main__":
 
 def paste_run():
     import re
-    from utils import xclip
+    from .utils import xclip
     txt = xclip()
     txt = txt.strip('\n').strip('\r')
 
-    print txt
+    print(txt)
 
     # Replace bad character
     txt = txt.replace('’', "'")
 
     # Remove lines non starting with >>>
-    lines = filter( lambda x: x.startswith(">>>"), txt.splitlines())
+    lines = [x for x in txt.splitlines() if x.startswith(">>>")]
 
     # Remove >>> from beginning of lines
-    lines = map(lambda x: x.split(">>>")[1].strip(), lines)
+    lines = [x.split(">>>")[1].strip() for x in lines]
 
 
     #nextxt = "\n".join(lines)
@@ -440,11 +438,11 @@ def paste_run():
 
     for line in lines:
 
-        print ">>> ", line
+        print(">>> ", line)
 
         if re.match(".*=.*", txt):
             exec(line)
         else:
-            print eval(line)
+            print(eval(line))
 
 

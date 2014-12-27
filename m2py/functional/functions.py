@@ -5,6 +5,7 @@ Primitive Useful Functions
 
 
 """
+from functools import reduce
 
 def addl(list2, list1):
     return [ (b+a) for a, b in zip(list2, list1)]
@@ -25,7 +26,7 @@ def sliding_window(array, k):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> x = ['x0', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9']
     >>>
@@ -44,7 +45,7 @@ def sliding_window(array, k):
     return list(zip(*[ array[i:] for i in range(k)]))
 
 def dictzip(keys, values):
-    return dict(zip(keys, values))
+    return dict(list(zip(keys, values)))
 
 
 def transpose(matrix):
@@ -102,7 +103,7 @@ def every(function, array):
     every_.every(list, [predicate], [context]) Alias: all
     Returns true if all of the values in the list pass the predicate truth test.
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>> f.every(lambda x: x> 4, [1, 2, 3, 4, 5 ,6 , 7, 8])
     False
     >>>
@@ -122,7 +123,7 @@ def some(function, array):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>> f.some(lambda x: x> 4, [1, 2, 3, 4])
     False
     >>> f.some(lambda x: x> 4, [1, 2, 3, 4, 5 ,6 , 7, 8])
@@ -146,7 +147,7 @@ def reverse(array):
     :param array: List or Tuple of values
     :return:      Reversed array
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> f.reverse((1, 2, 3, 4, 5))
     [5, 4, 3, 2, 1]
@@ -236,7 +237,7 @@ def is_allequal(List):
     return True  if all elements are equal
     return False if elements are different
     """
-    return all(map(lambda x: x == List[0], List))
+    return all([x == List[0] for x in List])
 
 
 def duplicate(N, Elem):
@@ -291,7 +292,7 @@ def append(*ListOfLists):
     > lists:append([[1, 2, 3], [a, b], [4, 5, 6]]).
     [1,2,3,a,b,4,5,6]
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>> f.append([1, 2, 3], ['a', 'b'], [4, 5, 6])
     [1, 2, 3, 'a', 'b', 4, 5, 6]
 

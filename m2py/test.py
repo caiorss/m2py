@@ -26,7 +26,7 @@ matlab_list = Suppress('[') + OneOrMore(floatnum) + Suppress(']')
 
 greet = Word(alphas) + "," + Word(alphas) + "!"
 greeting = greet.parseString("Hello, World!")
-print greeting
+print(greeting)
 
 numeric_const_pattern = r"""
  [-+]? # optional sign
@@ -53,6 +53,6 @@ set(gcf, 'name', 'trimf', 'numbertitle', 'off'
 
 # floatt = Word(FLOAT)
 
-print floatnumber.searchString(txt)
+print(floatnumber.searchString(txt))
 
 #rx = re.compile(numeric_const_pattern, re.VERBOSE)

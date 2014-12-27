@@ -28,28 +28,28 @@ def _download_dataset(dataset):
 
 
 def read_csv_string(csvstring, skipline=None, colmax=None):
-    return map( lambda x: x.strip().split(",")[:colmax],  csvstring.strip().splitlines()[skipline:])
+    return [x.strip().split(",")[:colmax] for x in csvstring.strip().splitlines()[skipline:]]
 
 
 def show_dataset():
-    for key, data in datasets_collection.iteritems():
-        print "Dataset: ", key
-        print data["short"]
-        print "\n"
+    for key, data in datasets_collection.items():
+        print("Dataset: ", key)
+        print(data["short"])
+        print("\n")
 
 
 def show_description():
     import re
 
-    for key, data in datasets_collection.iteritems():
-        print "Dataset: ", key
+    for key, data in datasets_collection.items():
+        print("Dataset: ", key)
 
-        print data["description"]
+        print(data["description"])
 
-        print data["url"]
+        print(data["url"])
 
-        print 70 * "-"
-        print ""
+        print(70 * "-")
+        print("")
 
 
 def _getIPCA():
@@ -62,7 +62,7 @@ def _getIPCA():
     date = lambda ds: datetime.strptime(ds, "%Y.%m")
     types =  [ date, float ]
 
-    data = [ map(converter, column) for converter, column in  zip(types, zip(*data))]
+    data = [ list(map(converter, column)) for converter, column in  zip(types, list(zip(*data)))]
 
     return data
 
@@ -76,7 +76,7 @@ def _getLTN():
     date = lambda ds: datetime.strptime(ds, "%Y.%m")
     types =  [ date, float ]
 
-    data = [ map(converter, column) for converter, column in  zip(types, zip(*data))]
+    data = [ list(map(converter, column)) for converter, column in  zip(types, list(zip(*data)))]
 
     return data
 
@@ -87,11 +87,11 @@ def _getTR():
     data = _download_dataset("TR")
     data = read_csv_string(data, 1, 2)
 
-    data  = filter(lambda x: x[1], data)
+    data  = [x for x in data if x[1]]
 
     date = lambda ds: datetime.strptime(ds, "%d/%m/%Y")
     types =  [ date, float ]
-    data = [ map(converter, column) for converter, column in  zip(types, zip(*data))]
+    data = [ list(map(converter, column)) for converter, column in  zip(types, list(zip(*data)))]
     return data
 
 
@@ -101,11 +101,11 @@ def _getCDB():
     data = _download_dataset("CDB_PREFIXADO")
     data = read_csv_string(data, 1, 2)
 
-    data  = filter(lambda x: x[1], data)
+    data  = [x for x in data if x[1]]
 
     date = lambda ds: datetime.strptime(ds, "%Y.%m")
     types =  [ date, float ]
-    data = [ map(converter, column) for converter, column in  zip(types, zip(*data))]
+    data = [ list(map(converter, column)) for converter, column in  zip(types, list(zip(*data)))]
     return data
 
 def _getUSD_BRL_ASK():
@@ -114,11 +114,11 @@ def _getUSD_BRL_ASK():
     data = _download_dataset("USD_BRL_EXCHANGE_ASK")
     data = read_csv_string(data, 1, 2)
 
-    data  = filter(lambda x: x[1], data)
+    data  = [x for x in data if x[1]]
 
     date = lambda ds: datetime.strptime(ds, "%d/%m/%Y")
     types =  [ date, float ]
-    data = [ map(converter, column) for converter, column in  zip(types, zip(*data))]
+    data = [ list(map(converter, column)) for converter, column in  zip(types, list(zip(*data)))]
     return data
 
 
@@ -128,11 +128,11 @@ def _getPOUPANCA():
     data = _download_dataset("POUPANCA")
     data = read_csv_string(data, 1, 2)
 
-    data  = filter(lambda x: x[1], data)
+    data  = [x for x in data if x[1]]
 
     date = lambda ds: datetime.strptime(ds, "%Y.%m")
     types =  [ date, float ]
-    data = [ map(converter, column) for converter, column in  zip(types, zip(*data))]
+    data = [ list(map(converter, column)) for converter, column in  zip(types, list(zip(*data)))]
     return data
 
 

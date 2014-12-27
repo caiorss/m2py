@@ -8,6 +8,7 @@ from m2py.finance import dtime
 from matplotlib import pyplot as plt
 
 import numpy
+from functools import reduce
 
 
 def lst2array(obj):
@@ -29,7 +30,7 @@ class Tserie:
     def __init__(self, time, data, headers=[], name="", description="", dataprovider="", url=""):
 
         self.time = lst2array(time)
-        self.data = map(lst2array, data)
+        self.data = list(map(lst2array, data))
         self.format = "%Y-%m-%d"
         self.headers = ['time']
         self.headers.extend(headers)
@@ -68,13 +69,13 @@ class Tserie:
 
     def get_table(self):
         table = [self.time]
-        map(table.append, self.data)
-        table = zip(*table)
+        list(map(table.append, self.data))
+        table = list(zip(*table))
         return table
 
     def time_formated(self):
         if self.serie_type == "tserie":
-            times = map(lambda d: d.strftime(self.format), self.time)
+            times = [d.strftime(self.format) for d in self.time]
         else:
             times = self.time
 
@@ -84,8 +85,8 @@ class Tserie:
 
         times = self.time_formated()
         table = [times]
-        map(table.append, self.data)
-        table = zip(*table)
+        list(map(table.append, self.data))
+        table = list(zip(*table))
         return table
 
     def __str__(self):
@@ -105,14 +106,14 @@ class Tserie:
         times = self.time_formated()
 
         table = [times]
-        map(table.append, self.data)
+        list(map(table.append, self.data))
 
         #print table
 
         #print len(table)
 
         table = zip(*table)[:n]
-        print tabulate(table, headers=self.headers)
+        print(tabulate(table, headers=self.headers))
 
 
     def tail(self, n=10, out=True):
@@ -130,22 +131,22 @@ class Tserie:
 
         times = self.time_formated()
         table = [times]
-        map(table.append, self.data)
+        list(map(table.append, self.data))
 
         table = zip(*table)[-n:]
 
-        print ""
-        print tabulate(table, headers=self.headers)
-        print ""
+        print("")
+        print(tabulate(table, headers=self.headers))
+        print("")
 
     def start(self):
         table = [self.time]
-        map(table.append, self.data)
+        list(map(table.append, self.data))
         return zip(*table)[0]
 
     def end(self):
         table = [self.time]
-        map(table.append, self.data)
+        list(map(table.append, self.data))
         return zip(*table)[-1]
 
     def date_range(self, start_date, end_date):
@@ -157,12 +158,12 @@ class Tserie:
         end_date = dtime.date_dmy(end_date)
 
         table = [self.time]
-        map(table.append, self.data)
-        table = zip(*table)
+        list(map(table.append, self.data))
+        table = list(zip(*table))
 
-        table2 = filter(lambda d: start_date <= d[0] <= end_date, table)
+        table2 = [d for d in table if start_date <= d[0] <= end_date]
 
-        table2 = zip(*table2)
+        table2 = list(zip(*table2))
 
         return Tserie(time=table2[0], data=table2[1:])
 
@@ -181,8 +182,8 @@ class Tserie:
         if prevbusday:
             date = dtime.prevbusday(date)
 
-        return filter(lambda d: d[0].day == date.day and d[0].month == date.month
-                                and d[0].year == date.year, table)
+        return [d for d in table if d[0].day == date.day and d[0].month == date.month
+                                and d[0].year == date.year]
 
     def add_column(self, column, name=''):
         self.data.append(column)
@@ -211,17 +212,17 @@ class Tserie:
         dataprovider = fp.readline().split(":")[1].strip()
         url = fp.readline().strip().split(":")[1].strip()
         description = fp.readline().strip().split(":")[1].strip()
-        headers = map(lambda x: x.strip(), fp.readline().strip().split(","))
+        headers = [x.strip() for x in fp.readline().strip().split(",")]
 
-        column = lambda m, i: map(lambda e: e[i], m)
+        column = lambda m, i: [e[i] for e in m]
 
         rows = list(csv.reader(fp))
 
-        data = [column(rows, i) for i in xrange(len(headers))]
+        data = [column(rows, i) for i in range(len(headers))]
         time = data.pop(0)
-        time = map(lambda d: dtime.date_ymd(d, '-'), time)
+        time = [dtime.date_ymd(d, '-') for d in time]
 
-        data = [map(float, c) for c in data]
+        data = [list(map(float, c)) for c in data]
 
         #headers.pop(0)
 
@@ -291,7 +292,7 @@ class Tserie:
             return self.data[idx - 1]
 
     def columns(self, colist):
-        return map(self.column, colist)
+        return list(map(self.column, colist))
 
     def _plot(self, column_name):
         column = self.column(column_name)
@@ -303,7 +304,7 @@ class Tserie:
     def plot(self, columns, xlabel="", ylable="", title=""):
 
         if isinstance(columns, list):
-            map(self._plot, columns)
+            list(map(self._plot, columns))
         else:
             self._plot(columns)
 
@@ -339,17 +340,17 @@ class Tserie:
 
     def info(self):
 
-        print "\n"
-        print "Name:           ", self.name
-        print "Description:    ", self.description
-        print "Data Provider:  ", self.dataprovider
-        print "URL:            ", self.url
-        print "Headers:        ", self.headers
-        print "Time lenght     ", self.timelenght(), "  days"
-        print "Duration         {} years, {} month {} days".format(*self.timedureation())
-        print "Type:           ", self.serie_type
-        print "Rows:           ", len(self.time)
-        print "\n"
+        print("\n")
+        print("Name:           ", self.name)
+        print("Description:    ", self.description)
+        print("Data Provider:  ", self.dataprovider)
+        print("URL:            ", self.url)
+        print("Headers:        ", self.headers)
+        print("Time lenght     ", self.timelenght(), "  days")
+        print("Duration         {} years, {} month {} days".format(*self.timedureation()))
+        print("Type:           ", self.serie_type)
+        print("Rows:           ", len(self.time))
+        print("\n")
 
 
     def __repr__(self):
@@ -379,9 +380,9 @@ def cumproduct(vector):
     :param vector:
     :return:
     """
-    rng = xrange(1, len(vector) + 1)
+    rng = range(1, len(vector) + 1)
     # return map(lambda i: round(product(vector[0:i]), 8), rng)
-    return map(lambda i: product(vector[0:i]), rng)
+    return [product(vector[0:i]) for i in rng]
 
 
 def plot_against(serie1, serie2, columns, title="", xlabel="Date", labels =[] ):

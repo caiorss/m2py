@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __init__ import *
+from .__init__ import *
 import m2py.thermo.xsteam as xs
 
 
@@ -10,15 +10,15 @@ def calcerror(p):
 
 def test_function(function, arg, y):
 
-    _y = map(function, arg)
+    _y = list(map(function, arg))
 
     #print _y
 
-    error = map(calcerror, zip(y, _y))
+    error = list(map(calcerror, list(zip(y, _y))))
 
-    print map(lambda e: "%.3f" % e, _y)
-    print map(lambda e: "%.3f" % e, error)
-    print "Max Error %.3f%%" % max(error)
+    print(["%.3f" % e for e in _y])
+    print(["%.3f" % e for e in error])
+    print("Max Error %.3f%%" % max(error))
 
 
 # Test Tast P
@@ -28,17 +28,17 @@ Hf = [209.31, 251.11, 419.02, 632.18, 852.43, 1344.01, 1890.37]
 
 #_Ps = map(xs.psat_t, Ts)
 
-print "Testing xs.psat_t"
+print("Testing xs.psat_t")
 
 test_function(xs.psat_t, Ts, Ps)
 
 #print map(lambda e: "%.3f" % e, _Ps)
 #print map(lambda e: "%.3f%%" % e, Error)
 
-print 80 * "-"
+print(80 * "-")
 #-------------------------------------------------------------
 
-print "Testing xs.tsat_p"
+print("Testing xs.tsat_p")
 
 test_function(xs.tsat_p, Ps, Ts)
 
@@ -46,9 +46,9 @@ test_function(xs.tsat_p, Ps, Ts)
 #Error = map(calcerror, zip(Ts, _Ts))
 #-------------------------------------------------------------
 
-print 80 * "-"
+print(80 * "-")
 
-print "Testign xs.h_px(p, 0) or hf(p)"
+print("Testign xs.h_px(p, 0) or hf(p)")
 
 hf_p = lambda p: xs.h_px(p, 0)
 
@@ -56,9 +56,9 @@ test_function(hf_p, Ps, Hf)
 
 #-------------------------------------------------------------
 
-print 80 * "-"
+print(80 * "-")
 
-print "Testign xs.h_tx(p, 0) or hf(t)"
+print("Testign xs.h_tx(p, 0) or hf(t)")
 
 hf_t = lambda t: xs.h_tx(t, 0)
 
@@ -66,9 +66,9 @@ test_function(hf_t, Ts, Hf)
 
 #-------------------------------------------------------------
 
-print 80 * "-"
+print(80 * "-")
 
-print "Testing xs.h_pt"
+print("Testing xs.h_pt")
 
 pt = [(10, 50), (10, 100), (10, 400), (10, 700), (10, 1000), (10, 1200), (100, 200), (100, 700), (300, 250), (300, 600),
     (300, 1200), (500, 400), (800, 1000)]

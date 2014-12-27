@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import __xsteam__ as xst
+from . import __xsteam__ as xst
 
 
 def tsat_p(p):
@@ -90,7 +90,7 @@ def h_pt(p, T):
     T = xst.toSIunit_T(T)
     Region = xst.region_pT(p, T)
 
-    print "Region = ", Region
+    print("Region = ", Region)
 
     if Region == 1:
         Out = xst.fromSIunit_h(xst.h1_pT(p, T))
@@ -203,7 +203,7 @@ def v_pt(p, T):
 
     Region = xst.region_pT(p, T)
 
-    print "Region  = ", Region
+    print("Region  = ", Region)
 
     if Region == 1:
         Out = xst.v1_pT(p, T)
@@ -236,7 +236,7 @@ def vl_t(T):
 
 
 def sv_p(p):
-    from __xsteam__ import toSIunit_p, fromSIunit_s, s2_pT, T4_p, s3_rhoT, v3_ph, h4V_p
+    from .__xsteam__ import toSIunit_p, fromSIunit_s, s2_pT, T4_p, s3_rhoT, v3_ph, h4V_p
 
     p = p/1000.0
 
@@ -252,8 +252,8 @@ def sv_p(p):
     return Out
 
 def s_pt(p, T):
-    from __xsteam__ import toSIunit_p, toSIunit_T, region_pT, v3_ph, h3_pT
-    from __xsteam__ import fromSIunit_s, s1_pT, s2_pT, h3_rhoT, s5_pT, s3_rhoT
+    from .__xsteam__ import toSIunit_p, toSIunit_T, region_pT, v3_ph, h3_pT
+    from .__xsteam__ import fromSIunit_s, s1_pT, s2_pT, h3_rhoT, s5_pT, s3_rhoT
     p = p/1000.0
     T = toSIunit_T(T)
 

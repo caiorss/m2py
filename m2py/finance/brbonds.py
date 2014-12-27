@@ -4,7 +4,7 @@
 Brazilian Bonds Calculation and Validation
 
 """
-import dtime as dt
+from . import dtime as dt
 
 
 
@@ -52,7 +52,7 @@ def payment_dates(settle, maturity):
         dsemester2 = dt.ymd2date(year, 7, 1)
         dates.extend([dsemester1, dsemester2])
 
-    dates = filter(lambda d: date_s < d <= date_m, dates)
+    dates = [d for d in dates if date_s < d <= date_m]
 
     dates[0] = dt.daysadd(dates[0], -1)
 
@@ -176,7 +176,7 @@ def bond_yield(price, couponRate, settle, maturity, facevalue=1000.0):
 
     #result = roots.regualfalsi(equation, 0, 1, 1e-6, 400)
     result = roots.steffenssen(equation, 1, 1e-6, 400)
-    print result
+    print(result)
     x = result[0]
 
     #print "x = ", x
@@ -248,7 +248,7 @@ def test_payment_dates_br():
     """
     from pprint import pprint
 
-    pprint(map(dt.date2str_dmy, payment_dates("9/1/2004", "1/1/2008")))
+    pprint(list(map(dt.date2str_dmy, payment_dates("9/1/2004", "1/1/2008"))))
 
 
 # print bond_price(ytm=0.1652, settle="09/01/2004", maturity="01/01/2008", couponRate=0.1)

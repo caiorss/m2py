@@ -157,7 +157,7 @@
     vx_ph  Vapour volume fraction as a function of pressure and enthalpy
     vx_ps  Vapour volume fraction as a function of pressure and entropy.
 """
-from __future__ import division
+
 import numpy as np
 from numpy import ndarray, arange
 from math import log, log10, exp
@@ -2276,19 +2276,19 @@ def test_eq_(function, args, expected_result, tol=1e-3):
     :return:
     """
 
-    print "args = ", args, "expected result = ", expected_result
-    print "tolerance - ", tol
+    print("args = ", args, "expected result = ", expected_result)
+    print("tolerance - ", tol)
 
     result = function(*args)
     error = abs(result - expected_result)
 
     if error <= tol:
 
-        print "[OK] - error = ", error
+        print("[OK] - error = ", error)
     else:
-        print "[NOT] - error = ", error
+        print("[NOT] - error = ", error)
 
-    print 50 * '-'
+    print(50 * '-')
 
 
 def region_ps(p, s):
@@ -2509,7 +2509,7 @@ def u3_rhoT(rho, T):
 
 
 def test_eq(function, args, expected_result, tol=1e-3):
-    for arg, e in zip(zip(*args), expected_result):
+    for arg, e in zip(list(zip(*args)), expected_result):
         test_eq_(function, arg, e, tol=1e-3)
 
 
@@ -2528,10 +2528,10 @@ def test_equation(X, Y, function, tol=1e-3):
 
         error = abs(y - y_)
 
-        print "x = ", x, "y = ", y, "y_ = ", y_, "error = ", error
+        print("x = ", x, "y = ", y, "y_ = ", y_, "error = ", error)
 
         if error <= tol:
-            print "OK"
+            print("OK")
         else:
-            print "NOT"
+            print("NOT")
 

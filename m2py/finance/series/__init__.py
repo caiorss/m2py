@@ -11,12 +11,12 @@ import os as __os__
 
 from m2py.finance.timeserie import plot_against
 
-import ipea
+from . import ipea
 
 __thisdir = __utils__.this_dir()
 datadir = datasets_dir = __utils__.resource_path("datasets")
 datafiles = __os__.listdir(datadir)
-datasets = map(lambda d: d.split(".")[0], datafiles)
+datasets = [d.split(".")[0] for d in datafiles]
 
 
 def __dataset_path(dataset):
@@ -30,7 +30,7 @@ def metadata(serie):
     dataprovider = fp.readline().split(":")[1].strip()
     url = fp.readline().strip().split(":")[1].strip()
     description = fp.readline().strip().split(":")[1].strip()
-    headers = map(lambda x: x.strip(), fp.readline().strip().split(","))
+    headers = [x.strip() for x in fp.readline().strip().split(",")]
     return dict(name=name, dataprovider=dataprovider, url=url, description=description, headers=headers)
 
 
@@ -38,7 +38,7 @@ def list_data():
     """
     :return:
     """
-    print
+    print()
 
 
 def update_dataset(dataset):
@@ -51,7 +51,7 @@ def update_dataset(dataset):
 
 def datalist():
 
-    print """
+    print("""
     Datasets:
 
         selic       Selic since 1/7/2000 and VNA ( Updated Notional Value),
@@ -60,7 +60,7 @@ def datalist():
         usd2brl     USD to BRL exchange Rate historical values
 
 
-    """
+    """)
 
 
 def data():
@@ -85,9 +85,9 @@ def data():
             ("Headers :", m["headers"]),
         )
 
-        print "\n"
+        print("\n")
 
-        print tabulate(out, tablefmt="plain")
+        print(tabulate(out, tablefmt="plain"))
 
 
 def load(dataset):

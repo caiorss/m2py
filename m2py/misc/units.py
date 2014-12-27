@@ -175,7 +175,7 @@ EXAMPLES
     5.724972329300408
     >>> 
 """
-from __future__ import division
+
 
 pi = 3.141592653589793
 

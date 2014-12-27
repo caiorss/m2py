@@ -93,8 +93,8 @@ def year_fraction(date1, date2, convention):
 
 
 
-print daycounting_actual('15-01-2002', '05-03-2002')
+print(daycounting_actual('15-01-2002', '05-03-2002'))
 
-print daycounting_actual('01-01-2006', '01-07-2006')
+print(daycounting_actual('01-01-2006', '01-07-2006'))
 
-print year_fraction('01-01-2006', '01-07-2006', 'ISDA')
+print(year_fraction('01-01-2006', '01-07-2006', 'ISDA'))

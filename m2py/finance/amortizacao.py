@@ -12,7 +12,7 @@
 # http://www.slideshare.net/DemtrioLuizRigueteGripp/mba-executivo-em-negcios-financeiros
 # http://www.gyplan.com/pt/amosink_pt.html
 #
-from __future__ import division
+
 from tabulate import tabulate
 
 
@@ -48,11 +48,11 @@ def show_amort_table(table):
 
 
 
-    print(tabulate(table, ['N', 'PAGAMENTO', 'JUROS', 'AMORTIZACAO', 'SALDO DEVEDOR']))
+    print((tabulate(table, ['N', 'PAGAMENTO', 'JUROS', 'AMORTIZACAO', 'SALDO DEVEDOR'])))
 
-    print "\nTotal de Pagamentos $ %.2f" % total
-    print "Total de Juros $ %.2f" % juros_total
-    print "Ágio : %s%%" % (100*round(premium, 2))
+    print("\nTotal de Pagamentos $ %.2f" % total)
+    print("Total de Juros $ %.2f" % juros_total)
+    print("Ágio : %s%%" % (100*round(premium, 2)))
 
 
 
@@ -282,31 +282,31 @@ def main():
     i = 0.1
     n = 4
 
-    print "Um produto tem valor a vista de  R$ 1000.000,00"
-    print "foi financiado em 4 parcelas de 31547.1"
-    print "econtre a taxa de juros do financiamento em %"
-    print ""
-    print "Solução :"
-    print " >>> print  100*juros_price(100000.00, 31547.1, 4)"
-    print  100*juros_price(100000.00, 31547.1, 4)
+    print("Um produto tem valor a vista de  R$ 1000.000,00")
+    print("foi financiado em 4 parcelas de 31547.1")
+    print("econtre a taxa de juros do financiamento em %")
+    print("")
+    print("Solução :")
+    print(" >>> print  100*juros_price(100000.00, 31547.1, 4)")
+    print(100*juros_price(100000.00, 31547.1, 4))
 
-    print 50*"-"
+    print(50*"-")
 
-    print "Emprestimo de R$ 1000.000,00 a 10% a.m 4 meses pelo:"
+    print("Emprestimo de R$ 1000.000,00 a 10% a.m 4 meses pelo:")
 
-    print "\nSistema Americano\n"
+    print("\nSistema Americano\n")
     #amort_juros_final(PV, i, n)
     amort(PV, i, n, 'final')
 
-    print "\nSistema PRICE - Parcelas Constantes\n"
+    print("\nSistema PRICE - Parcelas Constantes\n")
     #amort_price(PV, i, n)
     amort(PV, i, n, 'price')
 
-    print "\nSistema SAC - Amortizações Constantes\n"
+    print("\nSistema SAC - Amortizações Constantes\n")
     #amort_sac(PV, i, n)
     amort(PV, i, n, 'sac')
 
-    print "\nSistema SAM/ SACRE\n"
+    print("\nSistema SAM/ SACRE\n")
     #amort_sam(PV, i, n)
     amort(PV, i, n, 'sam')
 

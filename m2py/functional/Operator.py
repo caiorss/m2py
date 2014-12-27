@@ -162,7 +162,7 @@ class Operator():
         return lambda x: x.strip()
 
     def map(self, function):
-        return lambda x: map(function, x)
+        return lambda x: list(map(function, x))
 
     def sum(self):
         return lambda x: sum(x)

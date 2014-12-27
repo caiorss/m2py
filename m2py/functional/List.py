@@ -5,6 +5,7 @@ List Object based on SCALA List
 using functional programming principles
 
 """
+from functools import reduce
 
 class List():
 
@@ -62,7 +63,7 @@ class List():
         return  List(list(map(int, self.lst)))
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         return len(self.lst) == 0
 
     def transpose(self):
@@ -78,7 +79,7 @@ class List():
         return param.join(map(str, self.lst))
 
     def is_allequal(self):
-        return all(map(lambda x: x == self.list[0], self.list))
+        return all([x == self.list[0] for x in self.list])
 
     def array(self):
         return numpy.array(self.lst)

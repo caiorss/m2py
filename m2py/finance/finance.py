@@ -14,7 +14,7 @@ https://www.wiziq.com/tutorial/753129-Fixed-income-in-Matlab-26-Apr-1800
 
 http://www.quantcode.com/modules/mydownloads/viewcat.php?cid=9&min=120&orderby=datea&show=..
 """
-from __future__ import division
+
 from math import exp
 import datetime
 from m2py.numerical.roots import nraphson
@@ -35,10 +35,10 @@ def moving(iterator, length, step=1):
     """
     Moving window iterator
     """
-    from itertools import izip, count, tee, islice
+    from itertools import count, tee, islice
 
     ms = tee(iterator, length)
-    return izip(*[islice(m, i, None, step) for m, i in zip(ms, count())])
+    return zip(*[islice(m, i, None, step) for m, i in zip(ms, count())])
 
 
 def convert_AERtoCont(ic):
@@ -345,7 +345,7 @@ def __pvvar(CashFlow, Rate, CFDates=[], format=r"%m/%d/%Y", ndays=365):
     i = Rate
 
     dt = lambda s: datetime.datetime.strptime(s, format)
-    dates = map(dt, CFDates)
+    dates = list(map(dt, CFDates))
     # dates = [datetime.datetime.strptime(s, format) for s in CFDates]
 
 
@@ -436,7 +436,7 @@ def pvvar(CashFlow, Rate, CFDates=[], format=r"%m/%d/%Y", ndays=365):
 
     if isinstance(Rate, list):
         PV = lambda r: __pvvar(CashFlow, r, CFDates, format, ndays)
-        pv = map(PV, Rate)
+        pv = list(map(PV, Rate))
     else:
         pv = __pvvar(CashFlow, Rate, CFDates, format, ndays)
     return pv
@@ -463,12 +463,12 @@ def irr(CashFlow, all=False):
     # roots = [float(r) for r in roots if isreal(r)]
 
     if not all:
-        roots = filter(lambda r: isreal(r) and r > 0, roots)
-        roots = map(float, roots)
+        roots = [r for r in roots if isreal(r) and r > 0]
+        roots = list(map(float, roots))
 
     r2i = lambda r: 1 / r - 1
 
-    i = map(r2i, roots)
+    i = list(map(r2i, roots))
 
     return i
 
@@ -502,7 +502,7 @@ def fvvar(CashFlow, Rate, CFDates=[], format=r"%m/%d/%Y", ndays=365):
     q = 1
 
     dt = lambda s: datetime.datetime.strptime(s, format)
-    dates = map(dt, CFDates)
+    dates = list(map(dt, CFDates))
     # dates = [datetime.datetime.strptime(s, format) for s in CFDates]
 
     if not CFDates:
@@ -520,7 +520,7 @@ def fvvar(CashFlow, Rate, CFDates=[], format=r"%m/%d/%Y", ndays=365):
 
         dend = dates[0]
 
-        print "dend = ", dend
+        print("dend = ", dend)
 
         for c, date in zip(CashFlow, dates):
             dt = dend - date
@@ -528,7 +528,7 @@ def fvvar(CashFlow, Rate, CFDates=[], format=r"%m/%d/%Y", ndays=365):
 
             FV = FV + c * (1 + i) ** np
 
-            print "c = ", c, " date = ", date, " dt = ", dt, "np = ", np, " FV = ", FV
+            print("c = ", c, " date = ", date, " dt = ", dt, "np = ", np, " FV = ", FV)
 
             # FV = FV + CashFlow[0]
             # np = (dates[0] - dates[-1]).days/ndays
@@ -583,7 +583,7 @@ def xirr(CashFlow, CFDates, ndays=365, format=r"%m/%d/%Y", guess=1.0):
     """
 
     dt = lambda s: datetime.datetime.strptime(s, format)
-    dates = map(dt, CFDates)
+    dates = list(map(dt, CFDates))
     coefs = CashFlow
 
     d0 = dates[0]

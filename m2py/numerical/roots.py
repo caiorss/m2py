@@ -11,7 +11,7 @@ class RootFindErrror(Exception):
     def __init__(self, *args, **kwarg):
         # Set some exception infomation
         self.msg = "".join(args) + " " + str(kwarg)
-        print self.msg
+        print(self.msg)
 
 
 def bissection(f, a, b, tol=1e-3, maxit=2000, debug=False):
@@ -51,9 +51,9 @@ def bissection(f, a, b, tol=1e-3, maxit=2000, debug=False):
         it += 1
 
     if debug:
-        print "x =", c
-        print "it =", it
-        print "fc ", fc
+        print("x =", c)
+        print("it =", it)
+        print("fc ", fc)
 
     if fc > tol:
         raise RootFindErrror("Root not found ", x=c, it=it, fc=fc)

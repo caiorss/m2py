@@ -5,7 +5,7 @@ Type Detection Functions
 
 
 """
-from constants import POSINF, NEGINF
+from m2py.functional.constants import POSINF, NEGINF
 
 try:
     from numpy import ndarray, isnan

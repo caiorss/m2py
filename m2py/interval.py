@@ -56,8 +56,8 @@ def interval(c1, c2):
 def interval_step(table):
     #intervals, values = zip(*table)
 
-    intervals = list(map(lambda x: (x[:2]), table))
-    values    = list(map(lambda  x: x[2], table))
+    intervals = list([(x[:2]) for x in table])
+    values    = list([x[2] for x in table])
 
     #print(intervals)
 
@@ -126,10 +126,10 @@ alq_ir = ir_aliquota(base)
 imposto_renda = alq_ir/100.0 * base
 
 
-print "Aliquota Inss %", alq_inss
-print "Aliquota IR %", alq_ir
-print "Base de Calculo R$ ",base
-print "Imposto de renda R$ ",imposto_renda
+print(("Aliquota Inss %", alq_inss))
+print(("Aliquota IR %", alq_ir))
+print(("Base de Calculo R$ ",base))
+print(("Imposto de renda R$ ",imposto_renda))
 
 
 def imposto_ir(basedecalculo):

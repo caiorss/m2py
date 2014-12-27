@@ -245,7 +245,7 @@ v2_pT = R * T / p * Pi * (g0_pi + gr_pi) / 1000;
 
 text = translate(code)
 
-print text
+print(text)
 
 
 # for i in it:

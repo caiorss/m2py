@@ -265,7 +265,7 @@ factor.__dispatch__ = {
 def main():
     f = factor
 
-    print """
+    print("""
 Example:
 
 Finding Future Value
@@ -276,22 +276,22 @@ Finding Future Value
 
     5000*(F/P, 8%, 10)
     >>> 5000*factor('F/P', 0.08, 10)
-    """
-    print 5000*factor('F/P', 0.08, 10)
+    """)
+    print(5000*factor('F/P', 0.08, 10))
 
 
-    print """
+    print("""
 Finding Present Value
     A small company wants to make a single deposit now so it will have enough money to
     purchase a backhoe costing $50,000 five years from now.  If the account will earn
     interest of 10% per year, the amount that must be deposited now is nearest to:
 
     >>> 50000*factor('P/F', 0.10, 5)
-    """
-    print 50000*factor('P/F', 0.10, 5)
+    """)
+    print(50000*factor('P/F', 0.10, 5))
 
 
-    print """
+    print("""
 Uniform Series Involving P/A
     A chemical engineer believes that by  modifying the structure of a certain water
     treatment polymer, his company would earn an extra $5000 per year. At an interest
@@ -308,10 +308,10 @@ Uniform Series Involving P/A
 
     Solution:
     >>> 5000*factor('P/A', 0.10, 5)
-    """
-    print 5000*factor('P/A', 0.10, 5)
+    """)
+    print(5000*factor('P/A', 0.10, 5))
 
-    print """
+    print("""
 Uniform Series Involving F/A
     An industrial engineer made a modification to a chip manufacturing process that
     will save her company $10,000 per year. At an interest rate of 8% per year, how
@@ -332,8 +332,8 @@ Uniform Series Involving F/A
 
     >>> 10000*factor('F/A', 0.08, 7)
 
-    """
-    print 10000*factor('F/A', 0.08, 7)
+    """)
+    print(10000*factor('F/A', 0.08, 7))
 
 if __name__ == "__main__":
     main()

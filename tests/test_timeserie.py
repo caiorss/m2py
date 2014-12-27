@@ -16,7 +16,7 @@ selic.tail()
 selic.plot('VNA')
 selic.show()
 
-print " TIME REFERENCE TO DATE ZERO"
+print(" TIME REFERENCE TO DATE ZERO")
 
 #selic2 = selic.time_range_serie()
 

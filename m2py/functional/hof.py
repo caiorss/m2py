@@ -10,7 +10,7 @@ import numpy
 try:
     import _thread as thread
 except ImportError:
-    import thread
+    import _thread
 
 
 #---------------------------#
@@ -37,7 +37,7 @@ def mapl(function, array):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>> fun = lambda x: x**2
     >>> f.mapl(fun, [1, 2, 3, 4, 5, 6])
     [1, 4, 9, 16, 25, 36]
@@ -66,7 +66,7 @@ def joinfuncs(funclist, array):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> x = [1, 2, 3, 4, 5]
     >>> fun1 = lambda x: x**2 - 10.0
@@ -102,7 +102,7 @@ def maplx(function, arglist):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> x= [ (0, 2, 4), (-3, 4, 8), (4, 2, 5), (22, -10, 23)]
     >>>
@@ -112,7 +112,7 @@ def maplx(function, arglist):
     >>> f.maplx(fun, x)
     [-16, -23, 1, 607]
     """
-    return list(map(lambda params: function(*params), arglist))
+    return list([function(*params) for params in arglist])
 
 
 def zipl(*lists):
@@ -126,7 +126,7 @@ def reduce(function, array):
     """
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>> >>> f.reduce(lambda a, b: a*b, [ 1, 2, 3, 4, 5])
     120
     >>>
@@ -170,7 +170,7 @@ def currying(function, variable, **constants):
     Create a new function fun_x(x) from f(x)
     such that fun_x(x) = fun(x, y=2, z=3)
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> def fun(x, y, z): return x**2 - y*z
     ...
@@ -242,7 +242,7 @@ def zipwith(Combine, *Lists):
     zipwith(fun(X, Y) -> {X,Y} end, List1, List2) is equivalent to zip(List1, List2).
 
     Example:
-    >>> from functional import zipwith
+    >>> from m2py.functional import zipwith
     >>>
     >>> f = lambda x, y, z: x**2+y**2 - z
     >>> zipwith(f, [1, 2, 3], [4, 5, 6], [3, 9, 8])
@@ -264,7 +264,7 @@ def ifelse(condition, trueValue, falseValue):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> x = 3
     >>>
@@ -307,7 +307,7 @@ def ifelsef(condition, trueFunction, falseFunction=identity):
         f(x)  =
                 \  x/3  , if x >= 3
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> fx = f.ifelsef(lambda x: x<3, lambda x: x**2, lambda x: x/3.0)
     >>>
@@ -391,7 +391,7 @@ def in_parallel(function_list):
 
     Example:
 
-    >>> import functional as funcp
+    >>> from m2py import functional as funcp
     >>>
     >>> import time
     >>>
@@ -423,7 +423,7 @@ def in_parallel(function_list):
 
     def pfun():
         for func in function_list:
-            thread.start_new_thread( func, ())
+            _thread.start_new_thread( func, ())
 
     return pfun
 
@@ -478,7 +478,7 @@ def groupby(function, sequence):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>> f.groupby(len, ['Alice', 'Bob', 'Charlie', 'Dan', 'Edith', 'Frank'])
     {3: ['Bob', 'Dan'], 5: ['Alice', 'Edith', 'Frank'], 7: ['Charlie']}
     >>>
@@ -517,7 +517,7 @@ def iterate(function, x):
     Consider g1(x) = 10 / (x^3-1) and the fixed point
     let the initial guess x0 be 2.0
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> itx = f.iterate(lambda x: 10.0/(x**3-10.0), 2)
     >>> # Repeat function calls and accumulate return value

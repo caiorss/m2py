@@ -54,7 +54,7 @@ def interpol2(x, X, YY):
         
     """
     m =  lambda Y: interpol(x, X, Y)
-    return map(m, YY)
+    return list(map(m, YY))
 
 def read_table(filename, separator=',', dtype='float'):
     """
@@ -99,7 +99,7 @@ def read_table(filename, separator=',', dtype='float'):
             columns[k].append(v)
             #table[k].append(v)
 
-    table = Container(**dict(zip(headers, columns)))
+    table = Container(**dict(list(zip(headers, columns))))
     table.headers = headers
 
     return table
@@ -113,7 +113,7 @@ def read_csv_table(filename, dtype="float"):
     table = {}
     
     for row in rows:
-        for k, v in row.iteritems():
+        for k, v in row.items():
             try:
                 if dtype == "float":
                     _v = float(v)

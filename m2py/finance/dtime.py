@@ -18,7 +18,7 @@ import re
 
 
 # Define the weekday mnemonics to match the date.weekday function
-(MON, TUE, WED, THU, FRI, SAT, SUN) = range(7)
+(MON, TUE, WED, THU, FRI, SAT, SUN) = list(range(7))
 weekends = (SAT, SUN)
 
 
@@ -360,7 +360,7 @@ def dates2time(datelst, number_of_days=360.0):
     >>>
     """
     zerodate = datelst[0]
-    timevector = map(lambda d: (d - zerodate).days / number_of_days, datelst)
+    timevector = [(d - zerodate).days / number_of_days for d in datelst]
     return timevector
 
 
@@ -471,7 +471,7 @@ def parse_date(datestr):
 
     Convention: Day before Month
     """
-    for fmt, pat in __date_patterns.iteritems():
+    for fmt, pat in __date_patterns.items():
         if pat.match(datestr):
             #print "-----------------"
             #print "datestr = ", datestr, "fmt = ", fmt
@@ -491,7 +491,7 @@ def parse_date2(datestr):
 
     Convention: Month before day
     """
-    for fmt, pat in __date_patterns2.iteritems():
+    for fmt, pat in __date_patterns2.items():
         if pat.match(datestr):
             #print "-----------------"
             #print "datestr = ", datestr, "fmt = ", fmt
@@ -874,13 +874,13 @@ def date2offset_bu(datelst):
     :return: List of date intervals [ 0, d1-d0, d2-d0, d3 - d0, ..., dn - d0]
     """
     zerodate = datelst[0]
-    timevector = map(lambda d: daysbus(zerodate, d), datelst)
+    timevector = [daysbus(zerodate, d) for d in datelst]
     return timevector
 
 
 def date2ofsset(datelst):
     zerodate = datelst[0]
-    timevector = map(lambda d: days_actual(zerodate, d), datelst)
+    timevector = [days_actual(zerodate, d) for d in datelst]
     return timevector
 
 
@@ -934,10 +934,10 @@ class Date(object):
 
     def show(self):
 
-        print self.date
-        print self.date.weekday()
-        print self.date.strftime("%A")
-        print self.date.strftime("%B")
+        print(self.date)
+        print(self.date.weekday())
+        print(self.date.strftime("%A"))
+        print(self.date.strftime("%B"))
 
 
     def __add__(self, other):

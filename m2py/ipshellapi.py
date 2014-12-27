@@ -16,7 +16,7 @@
 
 #from tabulate import tabulate
 #from pprint import pprint
-from __future__ import division
+
 from IPython.terminal.embed import InteractiveShellEmbed
 import os
 import sys
@@ -38,7 +38,7 @@ class Ipshell:
             os.chdir(startdir)
 
     def addpath(self, pathlist):
-        map( sys.path.append, pathlist)
+        list(map( sys.path.append, pathlist))
 
     def magic(self, name):
         """
@@ -65,7 +65,7 @@ class Ipshell:
         return self.IP.magic(magicfunction)
 
     def exec_magics(self, magiclist):
-        map(self.IP.magic, magiclist)
+        list(map(self.IP.magic, magiclist))
 
 
     def get_ipython(self):

@@ -4,6 +4,6 @@
 
 """
 
-from factor import factor
-import finance
-import amortizacao
+from .factor import factor
+from . import finance
+from . import amortizacao

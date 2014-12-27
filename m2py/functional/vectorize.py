@@ -10,7 +10,7 @@ def maplx_factory(function):
     """
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> def fun(a, b, c): return a**2 - 10*b + c
     ...
@@ -48,7 +48,7 @@ def vectorize_juxt(funclist):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>>
     >>> f1 = lambda x: x**2 - 10.0
     >>> f2 = lambda x: 10*x + 8
@@ -84,7 +84,7 @@ def vectorize(function):
 
     Example:
 
-    >>> import functional as f
+    >>> from m2py import functional as f
     >>> import math
     >>>
     >>> sqrt = f.vectorize(math.sqrt)
@@ -223,7 +223,7 @@ def vectorize_args(function):
     6   3   8   6   -56
 
 
-    >>> from functional import vectorize_args
+    >>> from m2py.functional import vectorize_args
     >>> x = [  1,  2, 3, 4, 5, 6 ]
     >>> y = [ -2, -1, 0, 1, 2, 3 ]
     >>> z = 8
@@ -240,6 +240,6 @@ def vectorize_args(function):
     """
     def func(*args):
         columns =  equalize(*args)
-        return maplx(function, zip(*columns))
+        return maplx(function, list(zip(*columns)))
 
     return func

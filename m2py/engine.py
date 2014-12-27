@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import division
+
 
 """
 This module can be used to implement
@@ -88,9 +88,6 @@ def atan2d(x, y):
     return rad2deg(atan2(x, y))
 
 
-#######################################
-#
-#######################################
 
 def powerise10(x):
     
@@ -147,7 +144,7 @@ def read_csv_table(filename, dtype="float"):
         rows = csv.reader(db)
         
         # Read column names
-        columns = rows.next()
+        columns = next(rows)
         data = dict.fromkeys(columns, [])
         
         for row in rows:

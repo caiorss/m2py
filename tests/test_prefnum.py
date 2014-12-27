@@ -28,15 +28,15 @@ from m2py.misc import prefnum
    ans = [100,10,10,1]
 """
 
-print prefnum([514, 7.6, 37, 0.9], 'E6')  # Electronic, six steps per decade.
+print(prefnum([514, 7.6, 37, 0.9], 'E6'))  # Electronic, six steps per decade.
 
-print prefnum([514, 7.6, 37, 0.9], 'E12')  # Electronic, twelve steps per decade.
+print(prefnum([514, 7.6, 37, 0.9], 'E12'))  # Electronic, twelve steps per decade.
 
-print prefnum([514, 7.6, 37, 0.9], 'R10')  # Renard, ten steps per decade.
+print(prefnum([514, 7.6, 37, 0.9], 'R10'))  # Renard, ten steps per decade.
 
-print prefnum([514, 7.6, 37, 0.9], 'R"5')  # Renard, five steps per decade, twice rounded.
+print(prefnum([514, 7.6, 37, 0.9], 'R"5'))  # Renard, five steps per decade, twice rounded.
 
-print prefnum([514, 7.6, 37, 0.9], '125')  # 1-2-5, three steps per decade.
+print(prefnum([514, 7.6, 37, 0.9], '125'))  # 1-2-5, three steps per decade.
 
 
 # print prefnum([514,7.6,37,0.9],[25,75]) # Custom vector, two steps per decade.

@@ -66,13 +66,13 @@ def comma_to_dot(text):
 
 def splitcsv(text, separator=",", columnrange=0):
     if not columnrange:
-        return map(lambda x: filter(lambda x: x, x.split(separator)), text.splitlines())
+        return [[x for x in x.split(separator) if x] for x in text.splitlines()]
     else:
-        return map(lambda x: filter(lambda x: x, x.split(separator)[:columnrange]), text.splitlines())
+        return [[x for x in x.split(separator)[:columnrange] if x] for x in text.splitlines()]
 
 
 def trasnpose(lst):
-    return zip(*lst)
+    return list(zip(*lst))
 
 
 def process_raw_data(text):
@@ -86,8 +86,8 @@ def process_raw_data(text):
 def parse_columns(columns):
     import m2py.finance.dtime as dt
 
-    dates = map(dt.date_dmy, columns[0])
-    rates = map(float, columns[1])
+    dates = list(map(dt.date_dmy, columns[0]))
+    rates = list(map(float, columns[1]))
     return dates, rates
 
 
@@ -103,7 +103,7 @@ def build_database():
 
     now = dtime.date2str_dmy(dtime.dtime('now'), '/')
 
-    print "Downloading Database to : ", now
+    print("Downloading Database to : ", now)
 
     dates, rates = get_selic("01/07/2000", now)
     dates = dates[:-1]
@@ -111,11 +111,11 @@ def build_database():
 
 
     dailyfactor = lambda s: round((1+s/100.0)**(1/252.0), 8)
-    factors = map(dailyfactor, rates)
+    factors = list(map(dailyfactor, rates))
     VNA = cumproduct(factors)
     VNA.insert(0, 1.0)
     VNA = VNA[:-1]
-    VNA= map(lambda x: x*1000.0, VNA)
+    VNA= [x*1000.0 for x in VNA]
 
 
     ts = Tserie(dates,

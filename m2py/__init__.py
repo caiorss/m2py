@@ -10,5 +10,5 @@ __all__ = ["xsteam", "prefnum", "units", "constants"]
 
 #from thermo import xsteam
 #from prefnum import prefnum
-from misc import units
-from misc import constants
+from .misc import units
+from .misc import constants

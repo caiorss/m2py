@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import division
+
 import os
 import sys
 
@@ -211,7 +211,7 @@ def phase(T, P=None, v=None, debug=False):
         Tsat, vfsat, vgsat = __stable__(P, 'P', ['T', 'vf', 'vg'])
 
         if debug:
-            print dict(Tsat=Tsat, vfsat=vfsat, vgsat=vgsat)
+            print(dict(Tsat=Tsat, vfsat=vfsat, vgsat=vgsat))
 
         if T < Tsat:
             return "Supercooled liquid"
@@ -225,7 +225,7 @@ def phase(T, P=None, v=None, debug=False):
         Psat, vfsat, vgsat = __stable__(T, 'T', ['P', 'vf', 'vg'])
 
         if debug:
-            print dict(Psat=Psat, vfsat=vfsat, vgsat=vgsat)
+            print(dict(Psat=Psat, vfsat=vfsat, vgsat=vgsat))
 
         if v < vfsat:
             return "Liquid"

@@ -7,7 +7,7 @@
 
 
 # Get column i, from a matrix: list of tuples or list
-column = lambda m, i: map(lambda e: e[i], m)
+column = lambda m, i: [e[i] for e in m]
 column.__doc__ = """
 Get column i, from a matrix: list of tuples or list
 
@@ -30,16 +30,16 @@ Example:
 """
 import numpy
 # Get Transpose Matrix
-transpose = lambda M: zip(*M)
+transpose = lambda M: list(zip(*M))
 
-make_dict = lambda headers, columns: dict(zip(headers, columns))
+make_dict = lambda headers, columns: dict(list(zip(headers, columns)))
 
 
 def __mapf__(f, x):
     if isinstance(x, list):
-        return map(f, x)
+        return list(map(f, x))
     elif isinstance(x, numpy.ndarray):
-        return numpy.array(map(f, x))
+        return numpy.array(list(map(f, x)))
     else:
         return f(x)
 
@@ -91,7 +91,7 @@ def vectf2(function):
     >>> fv([[1,23,5], [23, 49,5], [12,4,6]])
     [23.558437978779494, 54.35991169970753, 14.0]
     """
-    vectorized = lambda rows: map(lambda x: function(*x), rows)
+    vectorized = lambda rows: [function(*x) for x in rows]
     vectorized.__doc__ = function.__doc__
 
     return vectorized
@@ -99,13 +99,13 @@ def vectf2(function):
 
 def __mapfxy__(f, xx, yy):
     if isinstance(xx, list) and isinstance(yy, list):
-        return map(lambda z: f(*z), zip(xx,yy))
+        return [f(*z) for z in zip(xx,yy)]
 
     elif isinstance(xx, list):
-        return map(lambda x: f(x, y=yy), xx)
+        return [f(x, y=yy) for x in xx]
 
     elif isinstance(yy, list):
-        return map(lambda y: f(x=xx, y=y), yy)
+        return [f(x=xx, y=y) for y in yy]
 
     else:
         return f(xx, yy)

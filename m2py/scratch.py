@@ -17,7 +17,7 @@ def paste_run():
     global txt
 
     import re
-    from utils import xclip
+    from .utils import xclip
     #txt = xclip()
     #txt = txt.strip('\n').strip('\r')
 
@@ -27,10 +27,10 @@ def paste_run():
     txt = txt.replace('’', "'")
 
     # Remove lines non starting with >>>
-    lines = filter( lambda x: x.startswith(">>>"), txt.splitlines())
+    lines = [x for x in txt.splitlines() if x.startswith(">>>")]
 
     # Remove >>> from beginning of lines
-    lines = map(lambda x: x.split(">>>")[1].strip(), lines)
+    lines = [x.split(">>>")[1].strip() for x in lines]
 
 
     #nextxt = "\n".join(lines)
@@ -38,7 +38,7 @@ def paste_run():
 
     for line in lines:
 
-        print ">>> ", line
+        print(">>> ", line)
 
         if not line:
             continue
@@ -46,6 +46,6 @@ def paste_run():
         if re.match(".*=.*", line):
             exec(line)
         else:
-            print eval(line)
+            print(eval(line))
 
 paste_run()

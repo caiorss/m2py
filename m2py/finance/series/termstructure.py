@@ -39,15 +39,15 @@ tree = ET(etree.fromstring(table)).getroot()
 
 t = tree.xpath('//td[@class="tabelaConteudo1" or @class="tabelaConteudo2"]')
 
-d = map(lambda t:t.text.strip().replace(',', '.'), t)
+d = [t.text.strip().replace(',', '.') for t in t]
 
 rows = [ (d.pop(0), d.pop(0), d.pop(0), )  for r  in d  ]
-columns = zip(*rows)
+columns = list(zip(*rows))
 
 from numpy import array, log
 
-terms = array(map(int, columns[0]))
-rates = array(map(float, columns[1]))
+terms = array(list(map(int, columns[0])))
+rates = array(list(map(float, columns[1])))
 
 
 log_pu = (1+rates)**(terms/252.0)

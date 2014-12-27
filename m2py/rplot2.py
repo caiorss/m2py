@@ -9,10 +9,10 @@
 # License: if you get any profit from this then please share it with me  and only use it for good
 import pylab
 from pylab import *
-import Tkinter
+import tkinter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 
-root = Tkinter.Tk()
+root = tkinter.Tk()
 root.wm_title("Extended Realtime Plotter")
 
 xAchse=pylab.arange(0,100,1)
@@ -29,11 +29,11 @@ line1=ax.plot(xAchse,yAchse,'-')
 
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas.show()
-canvas.get_tk_widget().pack(side=Tkinter.TOP, fill=Tkinter.BOTH, expand=1)
+canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
 toolbar = NavigationToolbar2TkAgg( canvas, root )
 toolbar.update()
-canvas._tkcanvas.pack(side=Tkinter.TOP, fill=Tkinter.BOTH, expand=1)
+canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
 values=[]
 values = [0 for x in range(100)]
@@ -77,13 +77,13 @@ def _quit():
     root.destroy()  # this is necessary on Windows to prevent
                     # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
-button = Tkinter.Button(master=root, text='Quit', command=_quit)
-button.pack(side=Tkinter.BOTTOM)
+button = tkinter.Button(master=root, text='Quit', command=_quit)
+button.pack(side=tkinter.BOTTOM)
 
-wScale = Tkinter.Scale(master=root,label="View Width:", from_=3, to=1000,sliderlength=30,length=ax.get_frame().get_window_extent().width, orient=Tkinter.HORIZONTAL)
-wScale2 = Tkinter.Scale(master=root,label="Generation Speed:", from_=1, to=200,sliderlength=30,length=ax.get_frame().get_window_extent().width, orient=Tkinter.HORIZONTAL)
-wScale2.pack(side=Tkinter.BOTTOM)
-wScale.pack(side=Tkinter.BOTTOM)
+wScale = tkinter.Scale(master=root,label="View Width:", from_=3, to=1000,sliderlength=30,length=ax.get_frame().get_window_extent().width, orient=tkinter.HORIZONTAL)
+wScale2 = tkinter.Scale(master=root,label="Generation Speed:", from_=1, to=200,sliderlength=30,length=ax.get_frame().get_window_extent().width, orient=tkinter.HORIZONTAL)
+wScale2.pack(side=tkinter.BOTTOM)
+wScale.pack(side=tkinter.BOTTOM)
 
 wScale.set(100)
 wScale2.set(wScale2['to']-10)
@@ -91,5 +91,5 @@ wScale2.set(wScale2['to']-10)
 root.protocol("WM_DELETE_WINDOW", _quit)  #thanks aurelienvlg
 root.after(100,SinwaveformGenerator)
 root.after(100,RealtimePloter)
-Tkinter.mainloop()
+tkinter.mainloop()
 #pylab.show()
