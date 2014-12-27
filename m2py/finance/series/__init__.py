@@ -24,7 +24,7 @@ def __dataset_path(dataset):
 
 def metadata(serie):
     filename = serie + ".csv"
-    fp = open(filename, 'rb')
+    fp = open(filename, 'r')
 
     name = fp.readline().split(":")[1].strip()
     dataprovider = fp.readline().split(":")[1].strip()
@@ -100,3 +100,7 @@ def load(dataset):
     return Tserie.from_csv(__dataset_path(dataset + ".csv"))
 
 
+class Dataset:
+
+    selic = load("selic")
+    usd2brl = load("usd2brl")
