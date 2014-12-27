@@ -2,11 +2,12 @@
 import sys
 import os
 import re
+import json
 
 from m2py.utils import resource_path
 from m2py.thermo.scrap_mollar_mass import get_molar_mass
 
-dat = open(resource_path("data/nasapolynomial.source")).read()
+dat = open(resource_path("data/nasa_poly7gas.txt")).read()
 data = "\n".join(dat.splitlines()[4:-2])
 data = re.findall("(\S+).*1\n(.*)2\n(.*)3\n(.*)4", data, re.M)
 
@@ -57,9 +58,16 @@ molar_mass_list = list(map(get_molar_mass, substances))
 
 molar_mass_data = dict(list(zip(substances, molar_mass_list)))
 
-f = shelve.open(resource_path('data/gas_nasa_poly7'), 'w')
+#f = shelve.open(resource_path('data/gas_nasa_poly7'), 'w')
+
+f = {}
 f['coefficients'] = thermodata
 f['molarmass'] = molar_mass_data
 f['substances'] = list(thermodata.keys())
 f['README'] = README
-f.close()
+
+fp = open(resource_path('data/gas_nasa_poly7.json'), 'w')
+fp.write(json.dumps(f))
+fp.close()
+
+#f.close()

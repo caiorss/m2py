@@ -12,4 +12,4 @@ path_dir = os.path.join(this, "..")
 sys.path.append(path_dir)
 
 from . import xsteam
-# from . import gas
+from . import gas

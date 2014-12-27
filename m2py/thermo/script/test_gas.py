@@ -1,9 +1,10 @@
 
-from .marktable import read_data_tables
-from . import gas as g
+from m2py.thermo.marktable import read_data_tables
+from m2py.thermo import gas as g
 from pprint import pprint
+from m2py.utils import resource_path
 
-tables = read_data_tables("gas_test_data.txt")
+tables = read_data_tables(resource_path("../data/gas_test_data.txt"))
 
 gases = list(tables.keys())
 

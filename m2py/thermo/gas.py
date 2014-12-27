@@ -14,9 +14,15 @@ http://www.myengineeringworld.net/2013/10/Excel-thermochemical-NASA-polynomials-
 from math import (log, exp)
 from m2py import units
 from m2py.utils import resource_path
-import shelve
+from m2py import utils
 
-data = shelve.open(resource_path("thermo_nasa_poly7.dat"))
+#import shelve
+import json
+
+#data = shelve.open(resource_path("thermo_nasa_poly7.dat"))
+data =  utils.load_json_file((resource_path("data/gas_nasa_poly7.json")))
+
+
 nasapoly7coefs = data['coefficients']
 molarmass      = data['molarmass']
 substances     = data['substances']

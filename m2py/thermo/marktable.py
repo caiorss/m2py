@@ -1,7 +1,7 @@
 
 import re
 import sys
-from utils import Container
+from m2py.utils import Container
 
 def process_table(lines, separator=None):
     name = lines[0].strip("NAME:").strip()
