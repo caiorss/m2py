@@ -9,7 +9,7 @@ numerical.py
 
 """
 
-from utils import Container
+from m2py.utils import Container
 
 def interpol(x, X, Y):
     """

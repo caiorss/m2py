@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .__init__ import *
 import m2py.units as u
 
-from utils import run_example
+from m2py.utils import run_example
 
 
 print("Converting 100 atm to torr")

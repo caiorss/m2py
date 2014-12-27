@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from .__init__ import *
-from m2py.finance import *
+from m2py.finance.finance import *
 
 
 print("Function xirr")

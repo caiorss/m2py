@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-from m2py.finance.series import selic as Selic
-selic = Selic.selic
+from m2py.finance.timeserie import Tserie  #selic as Selic
+
+selic = Tserie.from_csv("/home/tux/PycharmProjects/m2py/m2py/finance/series/datasets/selic.csv")
+
+#selic = Selic.selic
 selic2 = selic.time_range_serie()
 
 

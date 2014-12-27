@@ -6,7 +6,7 @@ Financial Time Series Collection similar to R datasets
 For while there is only Brazilian financial time series.
 
 """
-import utils as __utils__
+import m2py.utils as __utils__
 import os as __os__
 
 from m2py.finance.timeserie import plot_against

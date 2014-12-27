@@ -607,7 +607,7 @@ def xirr(CashFlow, CFDates, ndays=365, format=r"%m/%d/%Y", guess=1.0):
     f = lambda x: expsum(x, coefs, cashflow_exponents)
     df = lambda x: expsum(x, d_coefs, d_cashflow_exponents)
 
-    x = nraphson(f, df, guess)
+    x, _, _ = nraphson(f, df, guess)
     i = 1 / x - 1
     return i
 

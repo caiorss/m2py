@@ -7,6 +7,10 @@ $ python -c "import dtime ; from pprint import pprint ; import shelve ; holydays
 
 from datetime import timedelta
 from datetime import datetime
+from m2py import utils
+import shelve
+import json
+
 import re
 
 # from dateutil.parser import parser
@@ -547,13 +551,15 @@ dtime.flag = False
 #Date = lambda datestr: datetime.datetime.strptime(datestr, "%d-%m-%Y")
 
 
-import utils
-import shelve
 
-__brazil_holydays_database = utils.resource_path("holydays/brazil_holydays.dat")
-sh = shelve.open(__brazil_holydays_database)
-brazil_holydays = sh["brholydays"]
-sh.close()
+__brazil_holydays_database = utils.resource_path("data/brazil_holydays.csv")
+#sh = shelve.open(__brazil_holydays_database, protocol=2)
+sh = utils.read_file(__brazil_holydays_database)
+brazil_holydays = json.loads(sh)
+brazil_holydays = brazil_holydays["brholydays"]
+brazil_holydays = map(lambda x: data_ymd(x, "-"), brazil_holydays)
+
+#sh.close()
 
 
 def is_leap_year(date):

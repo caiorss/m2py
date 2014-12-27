@@ -112,7 +112,7 @@ class Tserie:
 
         #print len(table)
 
-        table = zip(*table)[:n]
+        table = list(zip(*table))[:n]
         print(tabulate(table, headers=self.headers))
 
 
@@ -133,7 +133,7 @@ class Tserie:
         table = [times]
         list(map(table.append, self.data))
 
-        table = zip(*table)[-n:]
+        table = list(zip(*table))[-n:]
 
         print("")
         print(tabulate(table, headers=self.headers))
@@ -206,7 +206,7 @@ class Tserie:
     def from_csv(cls, filename):
 
         import csv
-        fp = open(filename, "rb")
+        fp = open(filename, "r")
 
         name = fp.readline().split(":")[1].strip()
         dataprovider = fp.readline().split(":")[1].strip()
