@@ -6,6 +6,7 @@ using functional programming principles
 
 """
 from functools import reduce
+import numpy
 
 class List():
 
@@ -73,13 +74,16 @@ class List():
         return List(list(enumerate(self.lst)))
 
     def sort(self):
-        return List(sort(self.lst))
+
+        new = self.lst.copy()
+        new.sort()
+        return List(new)
 
     def joinstr(self, param=""):
         return param.join(map(str, self.lst))
 
     def is_allequal(self):
-        return all([x == self.list[0] for x in self.list])
+        return all([x == self.lst[0] for x in self.lst])
 
     def array(self):
         return numpy.array(self.lst)

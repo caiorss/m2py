@@ -35,4 +35,4 @@ def format_percent(number, digits=2):
 
 # print format_currency(1000000.67987)
 # print format_currency(1000000.67987, True)
-# print format_percent(0.0221, 4)
+# print fmtpct(0.0221, 4)

@@ -7,6 +7,7 @@ Primitive Useful Functions
 """
 from functools import reduce
 
+
 def addl(list2, list1):
     return [ (b+a) for a, b in zip(list2, list1)]
 
@@ -137,7 +138,7 @@ def unique(lst):
     """
     Remove repeated elements from an aray
     """
-    return storted(set(lst))
+    return sort(set(lst))
 
 
 def reverse(array):
@@ -278,8 +279,6 @@ def copy(object):
 
 
 
-def identity(x):
-    return x
 
 def append(*ListOfLists):
     """
@@ -302,5 +301,8 @@ def append(*ListOfLists):
     newlist = []
     mapl(lambda x: newlist.extend(x), ListOfLists)
     return newlist
+
+
+
 
 

@@ -33,6 +33,8 @@ def is_num(var):
     """
     return isinstance(var, int) or isinstance(var, float)
 
+def is_dict(var):
+    return isinstance(var, dict)
 
 def is_string(var):
     return isinstance(var, str)
@@ -49,8 +51,11 @@ def is_function(var):
 def is_none(var):
     return var is None
 
+
 def is_empty(lst):
-    return len(lst) == 0
+    return not lst
+
+
 
 def is_ndarray(lst):
     return isinstance(ndarray, lst)
@@ -63,6 +68,8 @@ def is_posinf(x):
 
 def is_neginf(x):
     return x <= NEGINF
+
+
 
 def is_finite(x):
     return NEGINF < x < POSINF

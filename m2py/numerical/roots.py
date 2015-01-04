@@ -36,6 +36,8 @@ def bissection(f, a, b, tol=1e-3, maxit=2000, debug=False):
     it = 0
 
     while it < maxit:
+
+
         c = (a + b) / 2
 
         fc = f(c)

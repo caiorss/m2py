@@ -15,3 +15,12 @@ Based on:
 
 
 """
+
+from .Operator import X
+from .List import List
+from .check import is_string, is_function, is_list, is_tuple, is_finite
+# from m2py.functional.hof import mapl, mapif, starmap, zipl, zipwith, dictzip, filterl, joinf, compose
+# from m2py.functional.hof import transpose, in_sequence, in_parallel
+#
+# from m2py.functional import hof
+# from m2py.functional.List import  List
