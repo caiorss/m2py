@@ -4,24 +4,270 @@
 Higher Order Functions
 """
 
-
-import numpy
-from .check import is_tuple, is_list, is_num, is_dict
-
 try:
     import _thread as thread
 except ImportError:
-    import _thread
+    import thread
 
 
-#---------------------------#
+class Operator():
+    """
+    Operator to Generate Lambda expressions
+
+    Scala-style lambdas definition
+
+    Idea from: https://github.com/kachayev/fn.py#fnpy-enjoy-fp-in-python
+
+    Example:
+
+    In [1]: from functional import X, mapl, filterl
+
+    In [2]: list(filter(X  < 10, [9, 10, 11]))
+    Out[2]: [9]
+
+    In [4]: mapl(X ** 2, [1, 2, 3, 4, 5, 6, 7])
+    Out[4]: [1, 4, 9, 16, 25, 36, 49]
+
+    In [2]: mapl(X  / 10, [9, 10, 11])
+    Out[2]: [0.9, 1.0, 1.1]
+
+    In [3]:  mapl( 10/X, [9, 10, 11])
+    Out[3]: [1.1111111111111112, 1.0, 0.9090909090909091]
+
+    """
+
+    """
+    Scala-style lambdas definition
+
+    Idea from: https://github.com/kachayev/fn.py#fnpy-enjoy-fp-in-python
+
+    Example:
+
+    In [1]: from functional import X, mapl, filterl
+
+    In [2]: list(filter(X  < 10, [9, 10, 11]))
+    Out[2]: [9]
+
+    In [4]: mapl(X ** 2, [1, 2, 3, 4, 5, 6, 7])
+    Out[4]: [1, 4, 9, 16, 25, 36, 49]
+
+    In [2]: mapl(X  / 10, [9, 10, 11])
+    Out[2]: [0.9, 1.0, 1.1]
+
+    In [3]:  mapl( 10/X, [9, 10, 11])
+    Out[3]: [1.1111111111111112, 1.0, 0.9090909090909091]
+
+    """
+
+    def __add__(self, other):
+
+        if isinstance(other, Operator):
+            return lambda x, y: x + y
+        return lambda x: x + other
+
+    def __radd__(self, other):
+        if isinstance(other, Operator):
+            return lambda x, y: x + y
+        return lambda x: other + x
+
+    def __mul__(self, other):
+
+        if isinstance(other, Operator):
+            return lambda x, y: x * y
+        return lambda x: x * other
+
+    def __rmul__(self, other):
+
+        if isinstance(other, Operator):
+            return lambda x, y: x * y
+        return lambda x: x * other
+
+
+    def __sub__(self, other):
+        return lambda x: x - other
+
+    def __rsub__(self, other):
+        return lambda x: other - x
+
+
+    def __div__(self, other):
+        return lambda x: x / other
+
+    def __truediv__(self, other):
+        return lambda x: x / other
+
+    def __floordiv__(self, other):
+        return lambda x: x // other
+
+    def __rdiv__(self, other):
+        return lambda x: other / x
+
+    def __rtruediv__(self, other):
+        return lambda x: other / x
+
+    def __rfloordiv__(self, other):
+        return lambda x: other // x
+
+    def __pow__(self, other):
+        return lambda x: x ** other
+
+    def __rpow__(self, other):
+        return lambda x: other ** x
+
+    def __neg__(self):
+        return lambda x: -x
+
+    def __pos__(self):
+        return lambda x: x
+
+    def __abs__(self):
+        return lambda x: abs(x)
+
+    def __len__(self):
+        return lambda x: len(x)
+
+    def __eq__(self, other):
+        return lambda x: x == other
+
+    def __ne__(self, other):
+        return lambda x: x != other
+
+    def __lt__(self, other):
+        return lambda x: x < other
+
+    def __le__(self, other):
+        return lambda x: x <= other
+
+    def __gt__(self, other):
+        return lambda x: x > other
+
+    def __ge__(self, other):
+        return lambda x: x >= other
+
+    def __or__(self, other):
+        return lambda x: x or other
+
+    def __and__(self, other):
+        return lambda x: x and other
+
+    def __rand__(self, other):
+        return lambda x: other and x
+
+    def __ror__(self, other):
+        return lambda x: other or x
+
+    def __contains__(self, item):
+        return lambda x: item in x
+
+    def __int__(self):
+        return lambda x: int(x)
+
+    def __float__(self):
+        return lambda x: float(x)
+
+    def split(self, pattern=' '):
+        return lambda x: x.split(pattern)
+
+    def strip(self):
+        return lambda x: x.strip()
+
+    def map(self, function):
+        return lambda x: list(map(function, x))
+
+    def sum(self):
+        return lambda x: sum(x)
+
+    def key(self, keyname):
+        """Generate lambda expression for dictionary key """
+        return lambda x: x[keyname]
+
+    def item(self, it):
+        """Generate lambda function for list item """
+        return lambda x: x[it]
+
+
+X = Operator()
+
+
+#############################
+#   TYPE CHECKING           #
+#############################
+
+POSINF = 1e200  # Negative Infinite number
+NEGINF = -1e200  # Positive infinite number
+
+
+def is_list(var):
+    """
+    Test if variable var is list
+
+    :return: True if var is list, False if var is not list
+    :rtype:  bol
+    """
+    return isinstance(var, list)
+
+
+def is_tuple(var):
+    return isinstance(var, tuple)
+
+
+def is_num(var):
+    """
+    Test if variable var is number (int or float)
+
+    :return: True if var is number, False otherwise.
+    :rtype:  bol
+    """
+    return isinstance(var, int) or isinstance(var, float)
+
+
+def is_dict(var):
+    return isinstance(var, dict)
+
+
+def is_string(var):
+    return isinstance(var, str)
+
+
+def is_function(var):
+    """
+    Test if variable is function (has a __call__ attribute)
+
+    :return: True if var is function, False otherwise.
+    :rtype:  bol
+    """
+    return hasattr(var, '__call__')
+
+
+def is_none(var):
+    return var is None
+
+
+def is_empty(lst):
+    return not lst
+
+
+def is_finite(x):
+    return NEGINF < x < POSINF
+
+
+def is_pos(x):
+    return x > 0
+
+
+def is_neg(x):
+    return x < 0
+
+
+#############################
 #      PRIMITIVES           #
-#---------------------------#
+#############################
 
 
 
 def identity(x):
     return x
+
 
 def constantly(value):
     """
@@ -33,19 +279,19 @@ def constantly(value):
     >>> std_gravity(2)
     9.81
     """
+
     def f(x):
         return value
 
     return f
 
+
 def nope():
     pass
 
+
 def contains(lst, value):
     return value in lst
-
-
-
 
 
 def mapl(function, array):
@@ -75,6 +321,25 @@ def mapl(function, array):
 def filterl(predicate, List):
     return list(filter(predicate, List))
 
+def filterl_index(predicate, List):
+    """
+    Return the index of elements that satisfy the predicate function.
+
+    :param predicate:
+    :param List:
+    :return:
+    """
+    result = []
+
+    for idx, e in enumerate(List):
+
+        if predicate(e):
+            result.append(idx)
+
+    return result
+
+def pick(List, list_of_index):
+    return [List[i] for i in list_of_index]
 
 
 def starmap(function, arglist):
@@ -116,6 +381,7 @@ def zipl(*lists):
     """
     return list(zip(*lists))
 
+
 def reduce(function, array):
     """
     Example:
@@ -131,10 +397,10 @@ def reduce(function, array):
 
     y = array[0]
 
-    for i in range(len(array)-1):
+    for i in range(len(array) - 1):
         #print("array = ", array)
         #print("y = ", y)
-        y = function(y, array[i+1])
+        y = function(y, array[i + 1])
 
     return y
 
@@ -151,7 +417,6 @@ def mapif(predicate, function, list):
             result[i] = function(x)
 
     return result
-
 
 
 def joinf(funclist):
@@ -187,9 +452,10 @@ def joinf(funclist):
     Note: Function taken from cloujure and R
     https://clojuredocs.org/clojure.core/juxt
     """
+
     def joined_functions(x):
-        return [ f(x) for f in funclist ]
-    
+        return [f(x) for f in funclist]
+
     return joined_functions
     #return [ list(map(fi, array)) for fi in funclist ]
 
@@ -222,7 +488,6 @@ def currying(function, variable, **constants):
         return function(**params)
 
     return curried_function
-
 
 
 def compose(*funclist):
@@ -258,7 +523,6 @@ def compose(*funclist):
     flist.reverse()
 
     def f(x):
-
         _x = x
 
         for f in flist:
@@ -300,7 +564,6 @@ def pipe(*funclist):
     """
 
     def f(x):
-
         _x = x
 
         for f in funclist:
@@ -309,6 +572,7 @@ def pipe(*funclist):
         return _x
 
     return f
+
 
 def zipwith(Combine, *Lists):
     """
@@ -403,7 +667,6 @@ def ifelsef(condition, trueFunction, falseFunction=identity):
     return func
 
 
-
 def nest(function, n):
     """
     fp::nest(f,n) returns the n-fold repeated composition of the function f.
@@ -434,14 +697,12 @@ def retry(call, tries, errors=Exception):
             if attempt + 1 == tries:
                 raise
 
+
 def ignore(call, errors=Exception):
     try:
         return call()
     except errors:
         return None
-
-
-
 
 
 def in_sequence(function_list):
@@ -453,10 +714,12 @@ def in_sequence(function_list):
     :return:              Function
 
     """
+
     def seqfun():
         for f in function_list: f()
 
     return seqfun
+
 
 def in_parallel(function_list):
     """
@@ -500,7 +763,7 @@ def in_parallel(function_list):
 
     def pfun():
         for func in function_list:
-            thread.start_new_thread( func, ())
+            thread.start_new_thread(func, ())
 
     return pfun
 
@@ -522,7 +785,7 @@ def caller(function, args=(), kwargs=None):
     """
     if not kwargs:
         kwargs = {}
-    return lambda : function(*args, **kwargs)
+    return lambda: function(*args, **kwargs)
 
 
 def call(function, args=(), kwargs=None):
@@ -554,8 +817,6 @@ def times(function, n):
         function()
 
 
-
-
 def groupby(function, sequence):
     """
 
@@ -582,7 +843,6 @@ def groupby(function, sequence):
             output[y].append(x)
 
     return output
-
 
 
 def iterate(function, x):
@@ -628,7 +888,7 @@ def iterate(function, x):
     """
 
     def iterf():
-        y= function(iterf.x)
+        y = function(iterf.x)
         iterf.x = y
         return y
 
@@ -638,16 +898,19 @@ def iterate(function, x):
 
 
 def addl(list2, list1):
-    return [ (b+a) for a, b in zip(list2, list1)]
+    return [(b + a) for a, b in zip(list2, list1)]
+
 
 def difl(list2, list1):
-    return [ (b-a) for b, a in zip(list2, list1)]
+    return [(b - a) for b, a in zip(list2, list1)]
+
 
 def mull(list2, list1):
-    return [ (b*a) for b, a in zip(list2, list1)]
+    return [(b * a) for b, a in zip(list2, list1)]
+
 
 def divl(list2, list1):
-    return [ (b/a) for b, a in zip(list2, list1)]
+    return [(b / a) for b, a in zip(list2, list1)]
 
 
 def sliding_window(array, k):
@@ -672,7 +935,8 @@ def sliding_window(array, k):
 
     Note: http://toolz.readthedocs.org/en/latest/api.html#toolz.itertoolz.sliding_window
     """
-    return list(zip(*[ array[i:] for i in range(k)]))
+    return list(zip(*[array[i:] for i in range(k)]))
+
 
 def dictzip(keys, values):
     """
@@ -684,6 +948,7 @@ def dictzip(keys, values):
 
 def transpose(matrix):
     return list(zip(*matrix))
+
 
 def unzip_l(matrix):
     return list(zip(*matrix))
@@ -716,7 +981,8 @@ def find_index(predicate, List):
     for i, x in enumerate(List):
         if predicate(x):
             return i
-    
+
+
 def find_indices(predicate, List):
     """
     Returns an array of all the indices of the 
@@ -728,23 +994,23 @@ def find_indices(predicate, List):
     [2, 3, 6]
     """
     result = []
-    
+
     for i, x in enumerate(List):
         if predicate(x):
             result.append(i)
-    
+
     return result
-            
-    
 
 
 def tail(list, n):
     """ Return the last n elements of a list """
     return list[:n]
 
+
 def head(list, n):
     """Return the firsts n elements of a list """
     return list[:n]
+
 
 def every(function, array):
     """
@@ -814,17 +1080,20 @@ def reverse(array):
     c.reverse()
     return c
 
+
 def last(array):
     """
     Return the last element of a list
     """
     return array[-1]
 
+
 def first(array):
     """
     Return the first element of a list
     """
     return array[0]
+
 
 def nth(array, n):
     """
@@ -840,7 +1109,8 @@ def nth(array, n):
 
 
 def inc(x):
-    return x+1
+    return x + 1
+
 
 def sort(array):
     """
@@ -862,6 +1132,7 @@ def sort(array):
     c.sort()
     return c
 
+
 def sublist(list, start, len):
     """
     Returns the sub-list of List1 starting at Start and with (max) Len elements. It is not an error for Start+Len to exceed the length of the list.
@@ -875,7 +1146,8 @@ def sublist(list, start, len):
     >>>
     >>>
     """
-    return list[start:(start+len)]
+    return list[start:(start + len)]
+
 
 def is_allequal(List):
     """
@@ -910,7 +1182,6 @@ def duplicate(N, Elem):
         return [Elem for i in range(N)]
 
 
-
 def copy(object):
     """
     Returns a clone of object
@@ -923,8 +1194,6 @@ def copy(object):
         return object.copy()
     else:
         return object
-
-
 
 
 def append(*ListOfLists):
@@ -948,7 +1217,6 @@ def append(*ListOfLists):
     newlist = []
     mapl(lambda x: newlist.extend(x), ListOfLists)
     return newlist
-
 
 
 def mapdict_values(function, dic):
@@ -1007,12 +1275,12 @@ def merge_dict(*dictionaries):
     :rtype:              dict
     """
     result = {}
-    
+
     for d in dictionaries:
         result.expand(d)
-    
+
     return result
-    
+
 
 def reverse_dict(dic):
     """
@@ -1031,7 +1299,7 @@ def product(list):
 
     prod = 1
     for e in list:
-        prod = prod*e
+        prod = prod * e
     return prod
 
 
@@ -1050,7 +1318,6 @@ def get(property):
             return getattr(object, property)
 
     return get_property
-
 
 
 def pluck(property):
@@ -1104,13 +1371,13 @@ def pluck(property):
 
     return fun
 
-    
 
 def printf(function):
     def printer(*args, **kwargs):
         print(function(*args, **kwargs))
+
     return printer
-    
+
 
 def take_while(predicate, List):
     result = []
@@ -1120,9 +1387,10 @@ def take_while(predicate, List):
         else:
             result.append(e)
 
+
 def drop_while(predicate, List):
     result = List.copy()
-    
+
     for e in List:
         if not predicate(e):
             return result.pop(0)
@@ -1137,69 +1405,63 @@ def once(func):
     """
     cache = []
     #def once_function(x):
-    
-    
-    
+
+
 def memoize(func):
-    
     cache = {}
-    
+
     def memoized(x):
-        
-        out =  cache.get(x)     
+
+        out = cache.get(x)
         if not out:
             out = func(x)
             cache[x] = out
             return out
         else:
             return out
-            
+
     return memoized
-            
 
 
 def fibbonaci(n):
-    
     if n > 2:
-        return fibbonaci(n-1) + fibbonaci(n-2)
+        return fibbonaci(n - 1) + fibbonaci(n - 2)
     else:
         return 1
-        
-        
-    
+
+
 def __fib(n):
-    
     if n > 2:
-        
+
         c = __fib.cache.get(n)
         if c:
-            return c        
-        
-        a = __fib.cache.get(n-1)
-        b = __fib.cache.get(n-2)
-        
-        if not a:            
-            a = __fib(n-1) 
-            __fib.cache[n-1] = a
-        
+            return c
+
+        a = __fib.cache.get(n - 1)
+        b = __fib.cache.get(n - 2)
+
+        if not a:
+            a = __fib(n - 1)
+            __fib.cache[n - 1] = a
+
         if not b:
-            b = __fib(n-2)
-            __fib.cache[n-2] = b
-        
-        c =  a + b 
+            b = __fib(n - 2)
+            __fib.cache[n - 2] = b
+
+        c = a + b
         __fib.cache[n] = c
         return c
     else:
         return 1
-                
+
+
 __fib.cache = {}
 
 
 def fib(n):
-    if not __fib.cache.get(n-1):
+    if not __fib.cache.get(n - 1):
         mapl(__fib, range(n))
     return __fib(n)
-    
 
 
 def maplx_factory(function):
@@ -1235,8 +1497,6 @@ def maplx_factory(function):
     return f
 
 
-
-
 def vectorize_juxt(funclist):
     """
 
@@ -1259,8 +1519,6 @@ def vectorize_juxt(funclist):
     """
     f = lambda x: juxt(funclist, x)
     return f
-
-
 
 
 def vectorize(function):
@@ -1288,15 +1546,13 @@ def vectorize(function):
     >>> sqrt([1, 2, 3, 4, 5])
     [1.0, 1.4142135623730951, 1.7320508075688772, 2.0, 2.23606797749979]
     """
-    def vectorized_function(x):
 
+    def vectorized_function(x):
         if isinstance(x, list):
             return list(map(function, x))
         return function(x)
 
     return vectorized_function
-
-
 
 
 def vectorize_var(function, variable, **constants):
@@ -1321,8 +1577,8 @@ def vectorize_var(function, variable, **constants):
     [-2, 3, 10, 19, 43]
     >>>
     """
-    fv  = currying(function, variable, **constants)
-    fv =  vectorize(fv)
+    fv = currying(function, variable, **constants)
+    fv = vectorize(fv)
     return fv
 
 
@@ -1363,7 +1619,9 @@ def vectorize_dec():
                 return list(map(f, x))
             else:
                 return f(x)
+
         return wrapper
+
     return wrap
 
 
@@ -1392,10 +1650,11 @@ def equalize(*args):
     v = find(is_list, args)
     if v is not None:
         N = len(v)
-        columns = mapif(is_num,  lambda x: duplicate(N, x), args)
+        columns = mapif(is_num, lambda x: duplicate(N, x), args)
     else:
         columns = args
     return columns
+
 
 def vectorize_args(function):
     """
@@ -1433,9 +1692,59 @@ def vectorize_args(function):
     [-76, -76, -74, -70, -64, -56]
     >>>
     """
+
     def func(*args):
-        columns =  equalize(*args)
+        columns = equalize(*args)
         return maplx(function, list(zip(*columns)))
 
     return func
 
+
+def get_column(matrix, column):
+    """
+    Get the column of a matrix ( List ) composed
+    of list or tuple that represents each row of
+    a matrix.
+
+    :param matrix:  List cotaining [ row0, row1, ... rown]  where row_i = [ ai0, ai1, ai2, ... ain]
+    :param column:  Column number ( Example: k to get column k)
+    :return:        Column k or  [ a0k, a1k, a2k, ... aMk ]
+
+    Example:
+
+    x   y   z
+    5   43  83
+    52  99  70
+    78  27  86
+    26  84  49
+
+
+    Represented as:
+
+    [
+    (x0, y0, z0),
+    (x1, y2, z1),
+    (x2, y2, z2),
+    ...
+    (xn, yn, zn)
+    ]
+
+    [(5,  43, 83),
+     (52, 99, 70),
+     (78, 27, 86),
+     (26, 84, 49),]
+
+    Each List
+    >>> M = [(5.0, 52.0, 78.0, 26.0), (43.0, 99.0, 27.0, 84.0), (83.0, 70.0, 86.0, 49.0)]
+    >>> get_column(M, 0)
+    [5.0, 43.0, 83.0]
+    >>> get_column(M, 1)
+    [52.0, 99.0, 70.0]
+    >>> get_column(M, 2)
+    [78.0, 27.0, 86.0]
+    >>> get_column(M, 3)
+    [26.0, 84.0, 49.0]
+
+    """
+
+    return list(map(lambda e: e[column], matrix))
