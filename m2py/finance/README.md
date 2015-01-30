@@ -15,4 +15,8 @@ Packagses:
     * /data   : Data providers client APIs
     * /series : Financial Series APIs
     
-    
+ 
+Yahoo API Documentation:
+
+
+![](https://github.com/caiorss/m2py/blob/master/m2py/finance/series/yahoo_api.png)
