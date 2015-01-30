@@ -7,6 +7,8 @@
 
 
 from requests import request
+import requests
+from utils3 import Chain
 
 from m2py.finance import dtime
 
@@ -56,46 +58,53 @@ def bovespa_stocks(symbols):
      ['9.03', '-0.28', '0.00', '0', '109784800', '"1/29/2015"'],
      ['0.07', '0.00', '0.027', '-5.424B', '9102900', '"1/29/2015"']]
 
+
     """
     tickers = [x + ".SA" for x in symbols]
     data = fetch_yahoo(tickers, "pc1ej4vd1")
     return data
 
 
-
-def historical_stock_price(symbol, year):
+def stock_historical_data(symbol):
     """
-    Fetch Stock Table containing
+    :param symbol: Stock/ Ticker Symbol
+    :return:       Dictionaries with the keys  (Dates, Open, High, Low, Close, AdjClose, Volume)
 
-     ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']
+    Example:
+    >>> data = stock_historical_data("PETR4.SA")
 
+    >>> data.keys()
+    dict_keys(['Close', 'Low', 'High', 'Date', 'Adj Close', 'Open', 'Volume'])
 
-    :param symbol:
-    :param year:
-    :return:
     """
 
-    url = "http://ichart.finance.yahoo.com/table.csv?s={}&c={}"
-    url = url.format(symbol, year)
+    #url = "http://ichart.finance.yahoo.com/table.csv?s={}&c={}"
+    url = "http://ichart.finance.yahoo.com/table.csv?s={}".format(symbol)
+    #url = url.format("PETR4.SA")
 
-    fd = request("GET",url)
+    req = requests.get(url)
+    data = req.text
+    lines= data.splitlines()
+    headers = lines[0].split(",")
+    table = Chain(lines[1:]).reverse().split(",")
 
-    headers = fd.readline().strip().split(',')
+    Date = table.select_pos(0).to_date_ymd("-").list
+    Open  = table.select_pos(1).to_float().list
+    High  = table.select_pos(2).to_float().list
+    Low   = table.select_pos(3).to_float().list
+    Close = table.select_pos(4).to_float().list
+    Volume = table.select_pos(5).to_int().list
+    AdjClose = table.select_pos(5).to_float().list
 
-    data = [x.strip().split(',') for x in fd.readlines()]
-    data = list(zip(*data))
+    columns =  Date, Open, High, Low, Close, Volume, AdjClose
 
-    time = [dtime.date_ymd(x, '-') for x in data[0]]
+    return dict(zip(headers, columns))
 
-    data = data[1:]
 
-    data = [[float(x) for x in v] for v in data]
+def plot_historical_data(symbol):
+    from matplotlib import pyplot
 
-    out = dict(list(zip(headers[1:], data)))
-    out[headers[0]] = time
-    out['headers'] = headers
-
-    return out
-
+    data = stock_historical_data(symbol)
+    pyplot.plot(data["Date"], data["Close"])
 
 
