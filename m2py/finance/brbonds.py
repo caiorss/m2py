@@ -4,8 +4,7 @@
 Brazilian Bonds Calculation and Validation
 
 """
-from . import dtime as dt
-
+from m2py.finance import dtime as dt
 
 
 def expsum(x, coefficient, powers):

@@ -377,13 +377,13 @@ ion()
 
     """, ipsh.user_ns)
 
-    list(map(ipsh.ipsh.user_ns_hidden.add, ["units", "constants", "vectorize", "eng", "eng2", "cosd", "sind", "tand"]))
+    #list(map(ipsh.ipsh.user_ns_hidden.add, ["units", "constants", "vectorize", "eng", "eng2", "cosd", "sind", "tand"]))
 
-    ipsh.load_functions_from_module("numpy", [
-        "array", "sin", "cos", "log", "log10", "exp", "linspace", "logspace", "arange",
-        "std", "var", "mean", "average", "cov", "corrcoef", "cumsum", "cumprod",
-        "min", "max", "sum", "histogram",
-    ], hidden=True)
+    # ipsh.load_functions_from_module("numpy", [
+    #     "array", "sin", "cos", "log", "log10", "exp", "linspace", "logspace", "arange",
+    #     "std", "var", "mean", "average", "cov", "corrcoef", "cumsum", "cumprod",
+    #     "min", "max", "sum", "histogram",
+    # ], hidden=True)
 
 
     # ipsh.load_functions_from_module("extra", ["deg2rad", "rad2deg", "sind", "cosd", "tand", "arctan2d",

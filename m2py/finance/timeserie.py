@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 
-from tabulate import tabulate
-from m2py.finance import dtime
-
-from matplotlib import pyplot as plt
-
-import numpy
 from functools import reduce
+
+from tabulate import tabulate
+from matplotlib import pyplot as plt
+import numpy
+
+from m2py.finance import dtime
 
 
 def lst2array(obj):

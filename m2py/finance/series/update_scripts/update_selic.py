@@ -15,8 +15,10 @@ Submit      Consultar
 
 """
 
-import requests
 import os
+
+import requests
+
 from m2py.finance.timeserie import Tserie, cumproduct
 from m2py.finance import dtime
 

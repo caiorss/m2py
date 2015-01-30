@@ -30,7 +30,7 @@ class Ipshell:
     """
 
     def __init__(self, banner="", exitmsg="", listener=False, startdir=""):
-        self.ipsh = InteractiveShellEmbed( banner1=banner, exit_msg=exitmsg, display_banner=True, user_ns={'division': division})
+        self.ipsh = InteractiveShellEmbed( banner1=banner, exit_msg=exitmsg, display_banner=True)
         self.IP = self.ipsh.get_ipython()
         self.listener = listener
 

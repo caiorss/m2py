@@ -4,19 +4,15 @@
 
 """
 
-
 import os
-import utils
 from pprint import pprint
 
+import utils
 import scraplib as s
-import m2py.finance.dtime as dt
 
+import m2py.finance.dtime as dt
 from m2py.finance.timeserie import Tserie
 
-import matplotlib.pyplot as plt
-
-import json
 
 baseurl = "https://www.debit.com.br/"
 url = "https://www.debit.com.br/consulta20.php?indexador=12&imes=01&iano=2000&fmes=12&fano=2014"

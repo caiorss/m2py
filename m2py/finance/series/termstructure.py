@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import requests
-from m2py.finance import dtime
 
 
 safari = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30"
@@ -44,7 +43,7 @@ d = [t.text.strip().replace(',', '.') for t in t]
 rows = [ (d.pop(0), d.pop(0), d.pop(0), )  for r  in d  ]
 columns = list(zip(*rows))
 
-from numpy import array, log
+from numpy import array
 
 terms = array(list(map(int, columns[0])))
 rates = array(list(map(float, columns[1])))

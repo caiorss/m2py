@@ -12,8 +12,6 @@ numerical.py
 from m2py.utils import Container
 
 
-
-
 def interpol(x, X, Y):
     """
     Interpolate over x in X, Y table.
